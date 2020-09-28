@@ -48,7 +48,6 @@ def main(since, to, urls):
         changedFiles = commit.modifications
         for file in changedFiles:
             filename = file.filename
-
             loc = file.nloc
             
             if not loc == None:
