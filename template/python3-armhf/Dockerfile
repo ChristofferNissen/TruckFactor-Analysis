@@ -52,4 +52,4 @@ HEALTHCHECK --interval=3s CMD [ -e /tmp/.lock ] || exit 1
 
 CMD ["fwatchdog"]
 
-RUN apt-get install -y git
+RUN apk add git
