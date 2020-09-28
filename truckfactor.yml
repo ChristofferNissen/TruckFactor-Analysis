@@ -11,3 +11,5 @@ functions:
         read_timeout: 120s
         write_timeout: 120s
         exec_timeout: 5m
+        gateway.readTimeout: 5m
+        gateway.writeTimeout: 5m
