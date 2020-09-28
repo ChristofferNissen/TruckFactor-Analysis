@@ -1,0 +1,9 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https:gateway.christoffernissen.me
+functions:
+  truckfactor:
+    lang: python3-armhf
+    handler: ./truckfactor
+    image: stifstof/truckfactor:latest
