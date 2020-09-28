@@ -52,4 +52,8 @@ HEALTHCHECK --interval=3s CMD [ -e /tmp/.lock ] || exit 1
 
 CMD ["fwatchdog"]
 
+USER root
+
 RUN apk add git
+
+USER app
