@@ -22,7 +22,7 @@ pipeline {
       }
       steps {
         unstash 'code'
-        sh 'faas-cli build -f water-ingestion-func.yml'
+        sh 'faas-cli build -f truckfactor.yml'
       }
     }
     stage('Push') {
@@ -39,7 +39,7 @@ pipeline {
         unstash 'code' 
         sh 'echo "$DOCKERCREDS_PSW" | docker login -u "$DOCKERCREDS_USR" --password-stdin' 
         sh 'echo "$OPENFAASCREDS_PSW" | faas-cli login -g $gateway --password-stdin'
-        sh 'faas-cli -g $gateway up -f water-ingestion-func.yml --env InfluxDBToken=$InfluxDBToken' 
+        sh 'faas-cli -g $gateway up -f truckfactor.yml' 
       } 
    }
   }  
