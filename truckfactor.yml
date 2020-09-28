@@ -10,3 +10,4 @@ functions:
     environment:
         read_timeout: 120s
         write_timeout: 120s
+        exec_timeout: 5m
