@@ -8,7 +8,7 @@ functions:
     handler: ./truckfactor
     image: stifstof/truckfactor:latest
     environment:
-        read_timeout: 120s
-        write_timeout: 120s
-        upstream_timeout: 120s
-        exec_timeout: 120s
+        read_timeout: 120
+        write_timeout: 120
+        upstream_timeout: 120
+        exec_timeout: 120
