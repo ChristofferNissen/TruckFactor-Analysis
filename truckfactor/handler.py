@@ -173,7 +173,7 @@ def main(since, to, urls):
         result = []
         for line in CreateMapOfCommitAdditionsAndDeletesPerFileName():
             result.append((line[0], line[1]+line[2]))
-        return sorted(result, key=lambda tup: tup[1], reverse=True)#[:10]
+        return result #sorted(result, key=lambda tup: tup[1], reverse=True)#[:10]
 
     def FileOverview():
         changes_per_file = CreateMapOfCommitAdditionsAndDeletesPerFileName()
@@ -317,8 +317,8 @@ def main(since, to, urls):
                 # x = (x - x_min) / (x_max - x_min)
                 result = []
                 max_v = sorted(collection, key=lambda tup: tup[1], reverse=True)[:1]
-                min_v = sorted(collection, key=lambda tup: tup[1], reverse=False)[:1]
-                x_min = min_v[0][1]
+                #min_v = sorted(collection, key=lambda tup: tup[1], reverse=False)[:1]
+                x_min = max_v[10][1]
                 x_max = max_v[0][1]
 
                 for e in collection:
@@ -384,8 +384,8 @@ def main(since, to, urls):
 
     # PROGRAM FLOW
     printIntro()
-    printTop10Committers(author_commit_dict)
+    #printTop10Committers(author_commit_dict)
     #printBottom10Committers(author_commit_dict)
-    FileOverview()
+    #FileOverview()
     CalculateTruckFactor()
     # PROGRAM END
