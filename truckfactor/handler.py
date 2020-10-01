@@ -14,21 +14,18 @@ def handle(req):
         req (str): request body
     """
 
-    # f = io.StringIO()
-    # with redirect_stdout(f):
+    f = io.StringIO()
+    with redirect_stdout(f):
         
-    #     #urls = ["repos/repo1", "repos/repo2", "https://github.com/ishepard/pydriller.git", "repos/repo3", "https://github.com/apache/hadoop.git"]
-    #     #urls = ["https://github.com/ishepard/pydriller.git"]
-    #     urls = ["https://github.com/Praqma/helmsman.git"]
-    #     since = None
-    #     to = datetime(2020, 9, 28, 0, 0)
-    #     main(since, to, urls)
+        #urls = ["repos/repo1", "repos/repo2", "https://github.com/ishepard/pydriller.git", "repos/repo3", "https://github.com/apache/hadoop.git"]
+        #urls = ["https://github.com/ishepard/pydriller.git"]
+        urls = ["https://github.com/Praqma/helmsman.git"]
+        since = None
+        to = datetime(2020, 9, 28, 0, 0)
+        main(since, to, urls)
         
-    # out = f.getvalue()  
-
-    time.sleep(100)
-
-    return "Hello, World!" 
+    out = f.getvalue()  
+    return out 
 
 
 # Colors for terminal output
