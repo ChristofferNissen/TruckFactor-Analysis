@@ -14,7 +14,7 @@ def handle(req):
         req (str): request body
     """
 
-    # json draft
+    # json example object
     # {
     #     "since": "None",
     #     "to": "2020-9-28-0,0",
@@ -24,48 +24,62 @@ def handle(req):
     #     ]
     # }
 
+    # Async invocation example
+    # Open terminal 1 and run: 'nc -l 888'
+    # Open terminal 2 and run
     # curl "https://gateway.christoffernissen.me/async-function/truckfactor" \
     #     --data "
-    #     {
-    #         "since": "None",
-    #         "to": "2020-9-28-0,0",
-    #         "urls": [
-    #             "https://github.com/Praqma/helmsman.git",
-    #             "https://github.com/ishepard/pydriller.git"
-    #         ]
-    #     }
+    #     {\
+    #         "since": "None",\
+    #         "to": "2020-9-28-0,0",\
+    #         "urls": [\
+    #             "https://github.com/Praqma/helmsman.git",\
+    #             "https://github.com/ishepard/pydriller.git"\
+    #         ]\
+    #     }\
     #     " \
     #     --header "X-Callback-Url: http://192.168.1.112:8888"
 
+    if req == "" or not req.__contains__("urls" or not req.__contains__("since") or not req.__contains__("to")):
+        return """ 
+        Input missing. Please provide JSON as in this example:
+        {
+            "since": "None",
+            "to": "2020-9-28-0-0",
+            "urls": [
+                "https://github.com/Praqma/helmsman.git",
+                "https://github.com/ishepard/pydriller.git"
+            ]
+        }
+        """
+
+    # parse JSON input string
     data = json.loads(req)
     since = None
     sinceStr = data["since"]
     if not sinceStr == "None": 
         sinceArr = sinceStr.split("-")
         since = datetime(int(sinceArr[0]), int(sinceArr[1]), int(sinceArr[2]), int(sinceArr[3]), int(sinceArr[4])) 
-
     toStr = data["to"]
     if not toStr == "None": 
         toArr = toStr.split("-")
         to = datetime(int(toArr[0]), int(toArr[1]), int(toArr[2]), int(toArr[3]), int(toArr[4])) 
-        
     urls = data["urls"]
 
     print("")
-    print("Input parse results")
-    print(since)
-    print(to)
-    print(urls)
+    print("Interpreted your input as:")
+    print("since", since)
+    print("to", to)
+    print("urls", urls)
     print("")
 
     f = io.StringIO()
     with redirect_stdout(f):
         
-        #urls = ["repos/repo1", "repos/repo2", "https://github.com/ishepard/pydriller.git", "repos/repo3", "https://github.com/apache/hadoop.git"]
-        #urls = ["https://github.com/ishepard/pydriller.git"]
-        urls = ["https://github.com/Praqma/helmsman.git"]
-        since = None
-        to = datetime(2020, 9, 28, 0, 0)
+        # fallback data
+        # urls = ["https://github.com/Praqma/helmsman.git"]
+        # since = None
+        # to = datetime(2020, 9, 28, 0, 0)
         main(since, to, urls)
         
     out = f.getvalue()  
