@@ -339,7 +339,8 @@ def main(since, to, urls):
             final_sorted_list_for_file = sorted(result, key=lambda tup: tup[1], reverse=True)[:5]
             for l in final_sorted_list_for_file:
                 if l[1] > 0.75:
-                    print(f"{bcolors.OKGREEN}--> {l}{bcolors.ENDC}")
+                    #print(f"{bcolors.OKGREEN}--> {l}{bcolors.ENDC}")
+                    print("-->", l, "OWNER")
                 else:
                     print("-->", l)
 

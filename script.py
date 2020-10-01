@@ -4,6 +4,8 @@ import pyfiglet
 import operator
 import math
 import emoji
+import io
+from contextlib import redirect_stdout
 
 # Colors for terminal output
 class bcolors:
@@ -373,5 +375,11 @@ urls = ["https://github.com/Praqma/helmsman.git"]
 
 since = None
 to = datetime(2020, 9, 28, 0, 0)
-main(since, to, urls)
+#main(since, to, urls)
 
+f = io.StringIO()
+with redirect_stdout(f):
+    main(since, to, urls)
+    
+out = f.getvalue()
+print(out)
