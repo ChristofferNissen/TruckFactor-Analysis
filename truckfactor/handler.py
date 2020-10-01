@@ -66,13 +66,6 @@ def handle(req):
         to = datetime(int(toArr[0]), int(toArr[1]), int(toArr[2]), int(toArr[3]), int(toArr[4])) 
     urls = data["urls"]
 
-    print("")
-    print("Interpreted your input as:")
-    print("since", since)
-    print("to", to)
-    print("urls", urls)
-    print("")
-
     f = io.StringIO()
     with redirect_stdout(f):
         
@@ -169,6 +162,12 @@ def main(since, to, urls):
         pyfiglet.print_figlet("VCS Analysis")
         print("by Christoffer Nissen (ChristofferNissen)")
         print()
+        print("")
+        print("Interpreted your input as:")
+        print("since", since)
+        print("to", to)
+        print("urls", urls)
+        print("")
         print()
         print("Analysing", urls)
         print("Project Name:", commit.project_name)
