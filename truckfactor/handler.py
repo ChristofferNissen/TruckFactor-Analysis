@@ -6,13 +6,57 @@ import math
 import emoji
 import io
 from contextlib import redirect_stdout
-import time
+import json
 
 def handle(req):
     """handle a request to the function
     Args:
         req (str): request body
     """
+
+    # json draft
+    {
+        "since": "None",
+        "to": "2020-9-28-0,0",
+        "urls": [
+            "https://github.com/Praqma/helmsman.git",
+            "https://github.com/ishepard/pydriller.git"
+        ]
+    }
+
+    # curl "https://gateway.christoffernissen.me/async-function/truckfactor" \
+    #     --data "
+    #     {
+    #         "since": "None",
+    #         "to": "2020-9-28-0,0",
+    #         "urls": [
+    #             "https://github.com/Praqma/helmsman.git",
+    #             "https://github.com/ishepard/pydriller.git"
+    #         ]
+    #     }
+    #     " \
+    #     --header "X-Callback-Url: http://192.168.1.112:8888"
+
+    data = json.loads(req)
+    since = None
+    sinceStr = data["since"]
+    if not sinceStr == "None": 
+        sinceArr = sinceStr.split("-")
+        since = datetime(int(sinceArr[0]), int(sinceArr[1]), int(sinceArr[2]), int(sinceArr[3]), int(sinceArr[4])) 
+
+    toStr = data["to"]
+    if not toStr == "None": 
+        toArr = toStr.split("-")
+        to = datetime(int(toArr[0]), int(toArr[1]), int(toArr[2]), int(toArr[3]), int(toArr[4])) 
+        
+    urls = data["urls"]
+
+    print("")
+    print("Input parse results")
+    print(since)
+    print(to)
+    print(urls)
+    print("")
 
     f = io.StringIO()
     with redirect_stdout(f):
@@ -103,6 +147,7 @@ def main(since, to, urls):
 
     # for loop end.
     # VCS commit parse done
+
 
     def printIntro():
         # Print program information to user
@@ -317,8 +362,8 @@ def main(since, to, urls):
                 # x = (x - x_min) / (x_max - x_min)
                 result = []
                 max_v = sorted(collection, key=lambda tup: tup[1], reverse=True)[:1]
-                #min_v = sorted(collection, key=lambda tup: tup[1], reverse=False)[:1]
-                x_min = max_v[10][1]
+                min_v = sorted(collection, key=lambda tup: tup[1], reverse=False)[:1]
+                x_min = min_v[0][1]
                 x_max = max_v[0][1]
 
                 for e in collection:
@@ -339,8 +384,7 @@ def main(since, to, urls):
             final_sorted_list_for_file = sorted(result, key=lambda tup: tup[1], reverse=True)[:5]
             for l in final_sorted_list_for_file:
                 if l[1] > 0.75:
-                    #print(f"{bcolors.OKGREEN}--> {l}{bcolors.ENDC}")
-                    print("-->", l, "OWNER")
+                    print(f"{bcolors.OKGREEN}--> {l}{bcolors.ENDC}")
                 else:
                     print("-->", l)
 
