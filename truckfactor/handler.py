@@ -63,6 +63,7 @@ def handle(req):
     if not sinceStr == "None": 
         sinceArr = sinceStr.split("-")
         since = datetime(int(sinceArr[0]), int(sinceArr[1]), int(sinceArr[2]), int(sinceArr[3]), int(sinceArr[4])) 
+    to = None
     toStr = data["to"]
     if not toStr == "None": 
         toArr = toStr.split("-")
