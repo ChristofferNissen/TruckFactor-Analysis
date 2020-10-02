@@ -51,7 +51,8 @@ def handle(req):
             "urls": [
                 "https://github.com/Praqma/helmsman.git",
                 "https://github.com/ishepard/pydriller.git"
-            ]
+            ],
+            "returnType": "Report", # or Number
         }
         """
 
@@ -67,14 +68,21 @@ def handle(req):
         toArr = toStr.split("-")
         to = datetime(int(toArr[0]), int(toArr[1]), int(toArr[2]), int(toArr[3]), int(toArr[4])) 
     urls = data["urls"]
+    returnType = data["returnType"]
 
+    tf = 0
     f = io.StringIO()
     with redirect_stdout(f):
-        main(since, to, urls)
+        tf = main(since, to, urls)
         
     out = f.getvalue()  
-    return out 
 
+    if returnType == "Report":
+        return out 
+    elif returnType == "Number":  
+        return tf
+    else:
+        return "Unsupported returnType. Use Report or Number"
 
 # Colors for terminal output
 class bcolors:
@@ -159,12 +167,6 @@ def main(since, to, urls):
         pyfiglet.print_figlet("VCS Analysis")
         print("by Christoffer Nissen (ChristofferNissen)")
         print()
-        print("")
-        print("Interpreted your input as:")
-        print("since", since)
-        print("to", to)
-        print("urls", urls)
-        print("")
         print()
         print("Analysing", urls)
         print("Project Name:", commit.project_name)
@@ -203,8 +205,7 @@ def main(since, to, urls):
 
         # sort by filename
         sorted_filename = sorted(code_changes, key=lambda tup: tup[2])
-        # line[2] = filename
-        # line[4] = msg
+        # line[2] = filename; line[4] = msg
         for line in sorted_filename:
             if not additions_per_file.__contains__(line[2]):
                 additions_per_file[line[2]] = line[4]
@@ -462,11 +463,12 @@ def main(since, to, urls):
             print("Your project has a low truck factor. Only a single person have to leave the project for it to be in serious danger due to lack of maintainers")
 
         print()
+        return tf
 
     # PROGRAM FLOW
     printIntro()
     #printTop10Committers(author_commit_dict)
     #printBottom10Committers(author_commit_dict)
     #FileOverview()
-    CalculateTruckFactor()
+    return CalculateTruckFactor()
     # PROGRAM END
