@@ -42,7 +42,7 @@ def handle(req):
     #     --header "X-Callback-Url: http://192.168.1.112:8888"
 
 
-    if req == "" or not req.__contains__("urls" or not req.__contains__("since") or not req.__contains__("to")):
+    if req == "" or not req.__contains__("urls" or not req.__contains__("since") or not req.__contains__("to") or not req.__contains__("returnType")):
         return """ 
         Input missing. Please provide JSON as in this example:
         {
