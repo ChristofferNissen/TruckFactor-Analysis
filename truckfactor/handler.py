@@ -27,8 +27,9 @@ def handle(req):
     # Async invocation example
     # Open terminal 1 and run: 'nc -l 888'
     # Open terminal 2 and run
+    # curl "https://gateway.christoffernissen.me/async-function/truckfactor" --data '{ "since": "None", "to": "2020-9-28-0-0","urls": ["https://github.com/Praqma/helmsman.git","https://github.com/ishepard/pydriller.git"]}' --header "X-Callback-Url: http://192.168.1.112:8888"
     # curl "https://gateway.christoffernissen.me/async-function/truckfactor" \
-    #     --data "
+    #     --data '
     #     {\
     #         "since": "None",\
     #         "to": "2020-9-28-0,0",\
@@ -37,8 +38,9 @@ def handle(req):
     #             "https://github.com/ishepard/pydriller.git"\
     #         ]\
     #     }\
-    #     " \
+    #     ' \
     #     --header "X-Callback-Url: http://192.168.1.112:8888"
+
 
     if req == "" or not req.__contains__("urls" or not req.__contains__("since") or not req.__contains__("to")):
         return """ 
@@ -68,11 +70,6 @@ def handle(req):
 
     f = io.StringIO()
     with redirect_stdout(f):
-        
-        # fallback data
-        # urls = ["https://github.com/Praqma/helmsman.git"]
-        # since = None
-        # to = datetime(2020, 9, 28, 0, 0)
         main(since, to, urls)
         
     out = f.getvalue()  
@@ -389,12 +386,18 @@ def main(since, to, urls):
                 return result
 
             result = NormalizeValues(result)
-            #result = StandardizeValues(result)
+            result2 = StandardizeValues(result)
             
+            aggResult = []
+            for i in range(result.__len__()):
+                r1 = result[i]
+                r2 = result2[i]
+                aggResult.append((r1[0], r1[1], r2[1]))
+
             print("Calculating DOA for file", fname)
 
             # Print results for top 10 files
-            final_sorted_list_for_file = sorted(result, key=lambda tup: tup[1], reverse=True)[:5]
+            final_sorted_list_for_file = sorted(aggResult, key=lambda tup: tup[1], reverse=True)[:5]
             for l in final_sorted_list_for_file:
                 if l[1] > 0.75:
                     print(f"{bcolors.OKGREEN}--> {l}{bcolors.ENDC}")
@@ -402,14 +405,15 @@ def main(since, to, urls):
                     print("-->", l)
 
             print()
-            
+            final_sorted_list_for_file = sorted(result, key=lambda tup: tup[1], reverse=True)[:5]
             file_doa.append((fname, final_sorted_list_for_file))
 
         #calculate truck factor
         #iterate through authors, checking that they are 'owners' of atleast 50% of the articles
         tf = 0
         pyfiglet.print_figlet("TRUCK FACTOR")
-        # this could be refined...
+        # this could be refined with more intelligent criteria for active auhors (time based on last commit maybe)
+        authorCount = []
         print("No. of authors", all_authors.__len__())
         print("No. of files", file_doa.__len__())
         print()
@@ -423,21 +427,40 @@ def main(since, to, urls):
                     if author == a:
                         if normalizeddoa > 0.75:
                             count = count + 1
+            authorCount.append((a, count))
+
+        authorCount = sorted(authorCount, key=lambda tup: tup[1], reverse=True)
+
+        totalCount = 0
+        for t in authorCount:
+            totalCount = totalCount + t[1]
+
+            a = t[0]
+            count = t[1]
             if count > 0:
                 print("Author", a)
                 print("Owner of ", count, "files")
 
-            if count / file_doa.__len__() > 0.5:
+        tf = 0
+        for t in authorCount:
+            a = t[0]
+            count = t[1]
+
+            if count / totalCount > 0.5:
+                # remove author from collection (will remove count from total count)
+                totalCount = totalCount - count
                 tf = tf + 1
+            else:
+                break
+
         print()
         print("The Truck Factor for this project is")
         print()
         pyfiglet.print_figlet("  //  " + str(tf) + "  //  ")
         
         if tf < 2:
-            print("Your project has a low truck factor. Only a single person have to leave the project for it to be in serious danger for decay")
+            print("Your project has a low truck factor. Only a single person have to leave the project for it to be in serious danger due to lack of maintainers")
 
-        print()
         print()
 
     # PROGRAM FLOW

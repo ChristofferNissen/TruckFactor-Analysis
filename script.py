@@ -330,6 +330,7 @@ def main(since, to, urls):
         tf = 0
         pyfiglet.print_figlet("TRUCK FACTOR")
         # this could be refined...
+        authorCount = []
         print("No. of authors", all_authors.__len__())
         print("No. of files", file_doa.__len__())
         print()
@@ -343,21 +344,40 @@ def main(since, to, urls):
                     if author == a:
                         if normalizeddoa > 0.75:
                             count = count + 1
+            authorCount.append((a, count))
+
+        authorCount = sorted(authorCount, key=lambda tup: tup[1], reverse=True)
+
+        totalCount = 0
+        for t in authorCount:
+            totalCount = totalCount + t[1]
+
+            a = t[0]
+            count = t[1]
             if count > 0:
                 print("Author", a)
                 print("Owner of ", count, "files")
 
-            if count / file_doa.__len__() > 0.5:
+        tf = 0
+        for t in authorCount:
+            a = t[0]
+            count = t[1]
+
+            if count / totalCount > 0.5:
+                # remove author from collection (will remove count from total count)
+                totalCount = totalCount - count
                 tf = tf + 1
+            else:
+                break
+
         print()
         print("The Truck Factor for this project is")
         print()
         pyfiglet.print_figlet("  //  " + str(tf) + "  //  ")
         
         if tf < 2:
-            print("Your project has a low truck factor. Only a single person have to leave the project for it to be in serious danger for decay")
+            print("Your project has a low truck factor. Only a single person have to leave the project for it to be in serious danger due to lack of maintainers")
 
-        print()
         print()
 
     # PROGRAM FLOW
@@ -369,13 +389,10 @@ def main(since, to, urls):
     # PROGRAM END
 
 
-#urls = ["repos/repo1", "repos/repo2", "https://github.com/ishepard/pydriller.git", "repos/repo3", "https://github.com/apache/hadoop.git"]
-urls = ["https://github.com/Praqma/helmsman.git"]
-#urls = ["https://github.com/ishepard/pydriller.git"]
 
+urls = ["https://github.com/Praqma/helmsman.git"]
 since = None
 to = datetime(2020, 9, 28, 0, 0)
-#main(since, to, urls)
 
 f = io.StringIO()
 with redirect_stdout(f):
