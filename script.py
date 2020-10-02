@@ -363,7 +363,7 @@ def main(since, to, urls):
             a = t[0]
             count = t[1]
 
-            if count / totalCount > 0.5:
+            if totalCount / file_doa.__len__() > 0.5:
                 # remove author from collection (will remove count from total count)
                 totalCount = totalCount - count
                 tf = tf + 1
@@ -390,7 +390,7 @@ def main(since, to, urls):
 
 
 
-urls = ["https://github.com/Praqma/helmsman.git"]
+urls = ["https://github.com/kubernetes/kubernetes"]
 since = None
 to = datetime(2020, 9, 28, 0, 0)
 

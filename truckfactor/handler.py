@@ -448,7 +448,7 @@ def main(since, to, urls):
             a = t[0]
             count = t[1]
 
-            if count / totalCount > 0.5:
+            if totalCount / file_doa.__len__():
                 # remove author from collection (will remove count from total count)
                 totalCount = totalCount - count
                 tf = tf + 1
