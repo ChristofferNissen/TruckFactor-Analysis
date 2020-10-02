@@ -352,7 +352,6 @@ def main(since, to, urls):
                     else:
                         variance = (sumSquared - (squared / n)) / (n - 1)
 
-                    print(variance)
                     stdiv = math.sqrt(variance)
                     return stdiv
 
