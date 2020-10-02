@@ -394,6 +394,7 @@ def main(since, to, urls):
                 aggResult.append((r1[0], r1[1], r2[1]))
 
             print("Calculating DOA for file", fname)
+            print("(Author, Normalized, Standardized)")
 
             # Print results for top 10 files
             final_sorted_list_for_file = sorted(aggResult, key=lambda tup: tup[1], reverse=True)[:5]
