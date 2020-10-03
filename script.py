@@ -6,7 +6,7 @@ import math
 import emoji
 import io
 from contextlib import redirect_stdout
-
+import os
 # Colors for terminal output
 class bcolors:
     HEADER = '\033[95m'
@@ -147,7 +147,7 @@ def main(since, to, urls):
 
         return changes_per_file
     
-    def GetTop10Files():
+    def GetFiles():
         result = []
         for line in CreateMapOfCommitAdditionsAndDeletesPerFileName():
             result.append((line[0], line[1]+line[2]))
@@ -208,7 +208,7 @@ def main(since, to, urls):
         file_doa = []
 
         # Find top 10 files with most changes
-        files = GetTop10Files()
+        files = GetFiles()
         for line in files:
             print("Currently processing", line)
             
@@ -327,48 +327,92 @@ def main(since, to, urls):
 
         #calculate truck factor
         #iterate through authors, checking that they are 'owners' of atleast 50% of the articles
-        tf = 0
         pyfiglet.print_figlet("TRUCK FACTOR")
-        # this could be refined...
-        authorCount = []
-        print("No. of authors", all_authors.__len__())
+        fileWithFileAuthor = []
+        fileAuthors = []
+        filesWithAuthors = []
+        authorAndCount = []
         print("No. of files", file_doa.__len__())
-        print()
-        print("Author(s) with file ownership:")
+        print("No. of authors", all_authors.__len__())
         for a in all_authors:           
             count = 0
             for e in file_doa:
-                for t in e[1]:
+                fileName = e[0]
+                AuthorDoaListForFile = e[1]
+                for t in AuthorDoaListForFile:
                     author = t[0]
                     normalizeddoa = t[1]
                     if author == a:
                         if normalizeddoa > 0.75:
                             count = count + 1
-            authorCount.append((a, count))
 
-        authorCount = sorted(authorCount, key=lambda tup: tup[1], reverse=True)
+                            if not filesWithAuthors.__contains__(fileName):
+                                filesWithAuthors.append(fileName)
 
+                            if not fileAuthors.__contains__(a):
+                                fileAuthors.append(a)
+
+                            fileWithFileAuthor.append((fileName, a))
+
+            authorAndCount.append((a, count))
+
+        authorAndCount = sorted(authorAndCount, key=lambda tup: tup[1], reverse=True)
+        print("No. of authors with ownership", fileAuthors.__len__())
+
+        print()
+        print("Author(s) with file ownership:")
         totalCount = 0
-        for t in authorCount:
-            totalCount = totalCount + t[1]
-
+        for t in authorAndCount:
             a = t[0]
             count = t[1]
+            totalCount = totalCount + count
             if count > 0:
                 print("Author", a)
                 print("Owner of ", count, "files")
 
+        # Check that 0.5 of files have an author
+        # Loop over files and count each time a file has an author
+        # we have a touple of (file, author) for each ownership
         tf = 0
-        for t in authorCount:
-            a = t[0]
-            count = t[1]
+        for t_ac in authorAndCount:
+            a = t_ac[0]
+            c = t_ac[1]
+            
+            # count unique files with authors
+            uq = 0
+            seenFiles = []
+            for t in fileWithFileAuthor:
+                f = t[0]
+                if not seenFiles.__contains__(f):
+                    seenFiles.append(f)
+                    uq = uq + 1
 
-            if totalCount / file_doa.__len__() > 0.5:
-                # remove author from collection (will remove count from total count)
-                totalCount = totalCount - count
-                tf = tf + 1
+            ratio = uq / file_doa.__len__()
+
+            if ratio > 0.5:
+                tf = tf + 1 
+                # remove author tuples
+                tmp = []
+                for v in fileWithFileAuthor:
+                    author = v[1]
+                    if not author == a:
+                        tmp.append(v)
+                fileWithFileAuthor = tmp
             else:
                 break
+
+
+        # tf = 0
+        # for t in authorAndCount:
+        #     a = t[0]
+        #     count = t[1]
+
+        #     if totalCount / file_doa.__len__() > 0.5:
+        #         # remove author from collection (will remove count from total count)
+        #         totalCount = totalCount - count
+        #         tf = tf + 1
+        #     else:
+        #         break
 
         print()
         print("The Truck Factor for this project is")
@@ -390,13 +434,35 @@ def main(since, to, urls):
 
 
 
-urls = ["https://github.com/kubernetes/kubernetes"]
+urls = ["https://github.com/Praqma/helmsman",
+        "https://github.com/rabbitmq/rabbitmq-server",
+        "https://github.com/docker/docker-ce",
+        "https://github.com/docker/cli",
+        "https://github.com/jenkinsci/jenkins",
+        "https://github.com/prometheus/prometheus",
+        "https://github.com/grafana/grafana",
+        "https://github.com/apache/kafka",
+        "https://github.com/kubernetes/ingress-nginx",
+        "https://github.com/kubernetes/kubernetes",
+        "https://github.com/golang/go",
+        "https://github.com/torvalds/linux",
+        "https://github.com/microsoft/vscode",
+        "https://github.com/ohmyzsh/ohmyzsh",
+        "https://github.com/tensorflow/tensorflow"
+        ]
 since = None
 to = datetime(2020, 9, 28, 0, 0)
 
-f = io.StringIO()
-with redirect_stdout(f):
-    main(since, to, urls)
-    
-out = f.getvalue()
-print(out)
+for url in urls:
+    f = io.StringIO()
+    with redirect_stdout(f):
+        main(since, to, url)
+        
+    out = f.getvalue()
+    arr = url.split("/")
+    projectName = arr[arr.__len__()-1]
+    fileName = "results/"+projectName+".txt"
+    f = open(fileName, "w")
+    f.write(out)
+    f.close()
+    print(out)
