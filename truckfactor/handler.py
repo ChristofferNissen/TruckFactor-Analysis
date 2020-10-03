@@ -37,7 +37,8 @@ def handle(req):
     #         "urls": [\
     #             "https://github.com/Praqma/helmsman.git",\
     #             "https://github.com/ishepard/pydriller.git"\
-    #         ]\
+    #         ],\
+    #         "returnType": "Report" \
     #     }\
     #     ' \
     #     --header "X-Callback-Url: http://192.168.1.112:8888"
@@ -53,8 +54,12 @@ def handle(req):
                 "https://github.com/Praqma/helmsman.git",
                 "https://github.com/ishepard/pydriller.git"
             ],
-            "returnType": "Report", # or Number
+            "returnType": "Report", 
         }
+            note: returnType can also be Number for easy programmatic consumption 
+            For multi url requests:
+                Report: Contatinated together to one response body
+                Number: Sum of tf for all repositories
         """
 
     # parse JSON input string
@@ -77,7 +82,7 @@ def handle(req):
     for u in urls: 
         f = io.StringIO()
         with redirect_stdout(f):
-            tf = main(since, to, u)
+            tf = tf + main(since, to, u)
             
         out = f.getvalue()
         report = report + "\n" + out
