@@ -11,3 +11,7 @@ functions:
       write_timeout: 15m
       read_timeout: 15m
       exec_timeout: 15m
+  linguist:
+    lang: Dockerfile
+    handler: ./linguist
+    image: stifstof/linguist:latest

@@ -434,24 +434,25 @@ def main(since, to, urls):
 
 
 
-urls = ["https://github.com/Praqma/helmsman",
-        "https://github.com/rabbitmq/rabbitmq-server",
-        "https://github.com/docker/docker-ce",
-        "https://github.com/docker/cli",
-        "https://github.com/jenkinsci/jenkins",
-        "https://github.com/prometheus/prometheus",
-        "https://github.com/grafana/grafana",
-        "https://github.com/apache/kafka",
-        "https://github.com/kubernetes/ingress-nginx",
-        "https://github.com/kubernetes/kubernetes",
-        "https://github.com/golang/go",
-        "https://github.com/torvalds/linux",
-        "https://github.com/microsoft/vscode",
-        "https://github.com/ohmyzsh/ohmyzsh",
-        "https://github.com/tensorflow/tensorflow"
+urls = [
+        #"https://github.com/torvalds/linux",
+        "/home/cn/Documents/git/TruckFactor-Analysis/repos/linux",
+        "https://github.com/fzaninotto/Faker",
+        "https://github.com/android/platform_frameworks_base",
+        "https://github.com/moment/moment",
+        "https://github.com/php/php-src",
+        "https://github.com/odoo/odoo",
+        "https://github.com/fog/fog",
+        "https://github.com/git/git",
+        "https://github.com/v8/v8",
+        "https://github.com/Seldaek/monolog",
+        "https://github.com/saltstack/salt",
+        "https://github.com/JetBrains/intellij-community",
+        "https://github.com/rails/rails/"
+        "https://github.com/puppetlabs/puppet/"
         ]
 since = None
-to = datetime(2020, 9, 28, 0, 0)
+to = datetime(2016, 4, 22, 0, 0)
 
 for url in urls:
     f = io.StringIO()
@@ -461,7 +462,7 @@ for url in urls:
     out = f.getvalue()
     arr = url.split("/")
     projectName = arr[arr.__len__()-1]
-    fileName = "results/"+projectName+".txt"
+    fileName = "paper_results/"+projectName+".txt"
     f = open(fileName, "w")
     f.write(out)
     f.close()

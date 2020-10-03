@@ -29,19 +29,21 @@ def handle(req):
     # Open terminal 1 and run: 'nc -l 888'
     # Open terminal 2 and run
     # curl "https://gateway.christoffernissen.me/async-function/truckfactor" --data '{ "since": "None", "to": "2020-9-28-0-0","urls": ["https://github.com/Praqma/helmsman.git","https://github.com/ishepard/pydriller.git"]}' --header "X-Callback-Url: http://192.168.1.112:8888"
-    # curl "https://gateway.christoffernissen.me/async-function/truckfactor" \
-    #     --data '
-    #     {\
-    #         "since": "None",\
-    #         "to": "2020-9-28-0,0",\
-    #         "urls": [\
-    #             "https://github.com/Praqma/helmsman.git",\
-    #             "https://github.com/ishepard/pydriller.git"\
-    #         ],\
-    #         "returnType": "Report" \
-    #     }\
-    #     ' \
-    #     --header "X-Callback-Url: http://192.168.1.112:8888"
+    '''
+    curl "https://gateway.christoffernissen.me/async-function/truckfactor" \
+        --data '
+        {
+            "since": "None",
+            "to": "2020-9-28-0-0",
+            "urls": [
+                "https://github.com/Praqma/helmsman.git",
+                "https://github.com/ishepard/pydriller.git"
+            ],
+            "returnType": "Report" 
+        }
+        ' \
+        --header "X-Callback-Url: http://192.168.1.112:8888"
+    '''
 
 
     if req == "" or not req.__contains__("urls") or not req.__contains__("since") or not req.__contains__("to") or not req.__contains__("returnType"):
