@@ -2,6 +2,15 @@ FROM openfaas/classic-watchdog:0.18.1 as watchdog
 
 FROM ruby:alpine
 
+RUN apk --update add --virtual build_deps \
+    build-base \
+    libc-dev \
+    linux-headers \
+    cmake \
+    && apk --no-cache add icu-dev libressl-dev \
+    && gem install github-linguist \
+    && apk del build_deps build-base libc-dev linux-headers cmake
+
 RUN mkdir -p /home/app
 
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
@@ -25,14 +34,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=3s CMD [ -e /tmp/.lock ] || exit 1
 
 CMD ["fwatchdog"]
-
-RUN apk --update add --virtual build_deps \
-    build-base \
-    libc-dev \
-    linux-headers \
-    cmake \
-    && apk --no-cache add icu-dev libressl-dev \
-    && gem install github-linguist \
-    && apk del build_deps build-base libc-dev linux-headers cmake
 
 ENTRYPOINT ["github-linguist"]
