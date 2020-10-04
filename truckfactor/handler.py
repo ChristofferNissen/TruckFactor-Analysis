@@ -89,7 +89,7 @@ def handle(req):
     res = validateInput(req)
     if res == "OK":
         (since, to, urls, returnType) = parseJSON(req)
-        run_analysis(since, to, urls, returnType)
+        return run_analysis(since, to, urls, returnType)
     else:
         return res
     
