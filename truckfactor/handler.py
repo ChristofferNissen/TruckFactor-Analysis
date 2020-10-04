@@ -42,6 +42,7 @@ class bcolors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
     BOLD = '\033[1m'
+    ITA = '\033[3m'
     UNDERLINE = '\033[4m'
 
 
@@ -141,6 +142,9 @@ def analyse(since, to, url, excludes):
         print("Total number of authors", all_authors.__len__())
         print("Internal committers:", internal_authors.__len__())
         print("External committers:", external_authors.__len__())
+        print("Specified exclude paths:")
+        for ep in excludes:
+            print(ep)
 
     def printLinguist(inclusion_list, responseText):
         pyfiglet.print_figlet("Linguist", font='small')
@@ -238,7 +242,7 @@ def analyse(since, to, url, excludes):
                     if exclude_path in path:
                         if file in files_for_analysis:
                             files_for_analysis.remove(file)
-                            if file not in excluded_files:
+                            if (file, exclude_path) not in excluded_files:
                                 excluded_files.append((file.filename, exclude_path))
 
 
@@ -496,6 +500,7 @@ def analyse(since, to, url, excludes):
             filesWithAuthors = []
             authorAndCount = []
 
+            print("Linguist file overview")
             print("No. of analyzed files:", file_author_doa.__len__())
             for fd in file_author_doa:
                 print(f"{bcolors.OKGREEN}{fd[0]}{bcolors.ENDC}")
@@ -508,12 +513,27 @@ def analyse(since, to, url, excludes):
                     filename = arr[arr.__len__()-1]
                     if filename.__contains__(file):
                         tmp_inclusion_list.remove(e)
+            
             for i in tmp_inclusion_list:
                 val = i.replace("\n", "")
-                if not i == "":
+                # different print for files excluded explicitly
+                explicitlyExcluded = False
+                res = ""
+                for e in excluded_files:
+                    filename = e[0]
+                    if val.__contains__(filename):
+                        explicitlyExcluded = True
+                        excludedBy = "excluded by " + e[1]
+                        res = filename + f"{bcolors.ITA}{excludedBy}{bcolors.ENDC}"
+                        break
+                if explicitlyExcluded:
+                    print(f"{bcolors.OKBLUE}{res}{bcolors.ENDC}") 
+                elif not i == "":
                     print(f"{bcolors.FAIL}{val}{bcolors.ENDC}")
+
             if excluded_files.__len__() > 0:
                 print("Excluded files")
+                print("(filename, excluded_by_path)")
             for e in excluded_files:
                 filename = e[0]
                 if not filename == "":
