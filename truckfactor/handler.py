@@ -78,6 +78,7 @@ def handle(req):
         else:
             return "OK"
 
+Enumerating objects: 7, done.
     def parseJSON(json_string):
         # parse JSON input string
         data = json.loads(json_string)
@@ -243,7 +244,7 @@ def analyse(since, to, url, excludes):
                     if exclude_path in path:
                         if file in files_for_analysis:
                             files_for_analysis.remove(file)
-                            if (file, exclude_path) not in excluded_files:
+                            if (file.filename, exclude_path) not in excluded_files:
                                 excluded_files.append((file.filename, exclude_path))
 
 
