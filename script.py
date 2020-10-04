@@ -35,8 +35,14 @@ def main(since, to, urls):
     internal_authors = []
     external_authors = []
     code_changes = []
+    code_files = []
     iac_changes = []
+    iac_files = []
+    project_name = ""
     for commit in commits.traverse_commits():
+        if not project_name == "":
+            project_name = commit.project_name
+
         msg = commit.msg
 
         author = commit.author.email
@@ -57,12 +63,15 @@ def main(since, to, urls):
                 lines_added = file.added
                 lines_removed = file.removed
                 code_changes.append((commit.hash, author, filename, msg, lines_added, lines_removed, org_author))
-
+                if not code_files.__contains__(filename):
+                    code_files.append(filename)
             else:
                 # documentation and IAC files
                 lines_added = file.added
                 lines_removed = file.removed
                 iac_changes.append((commit.hash, author, filename, msg, lines_added, lines_removed, org_author))
+                if not iac_files.__contains__(filename):
+                    iac_files.append(filename)
 
         # Create overall collection of all authors independnt of company
         if not all_authors.__contains__(author):
@@ -90,7 +99,7 @@ def main(since, to, urls):
         print()
         print()
         print("Analysing", urls)
-        #print("Project Name:", commit.project_name)
+        print("Project Name:", project_name)
         print("Since:", since)
         print("To:", to)
         print("Total number of commits", count)
@@ -333,6 +342,8 @@ def main(since, to, urls):
         filesWithAuthors = []
         authorAndCount = []
         print("No. of files", file_doa.__len__())
+        print("No. of code files", code_files.__len__())
+        print("No. of (excluded) iac files", iac_files.__len__())
         print("No. of authors", all_authors.__len__())
         for a in all_authors:           
             count = 0
@@ -435,7 +446,7 @@ def main(since, to, urls):
 
 
 urls = [
-        # "",
+         "https://github.com/Praqma/helmsman",
         # "https://github.com/fzaninotto/Faker",
         # "https://github.com/android/platform_frameworks_base",
         # "https://github.com/moment/moment",

@@ -6,7 +6,7 @@ def handle(req):
         req (str): request body
     """
 
-    subprocess.check_output(['git', 'clone', 'https://github.com/Praqma/helmsman', 'repository'])
+    subprocess.check_output(['git', 'clone', req, 'repository'])
     subprocess.check_output(['cd', 'repository'])
     output = subprocess.check_output(['github-linquist', '--breakdown'], text=True)
     

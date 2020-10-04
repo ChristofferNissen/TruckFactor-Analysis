@@ -1,0 +1,14 @@
+git clone https://github.com/torvalds/linux
+git clone https://github.com/fzaninotto/Faker
+git clone https://github.com/android/platform_frameworks_base
+git clone https://github.com/moment/moment
+git clone https://github.com/php/php-src
+git clone https://github.com/odoo/odoo
+git clone https://github.com/fog/fog
+git clone https://github.com/git/git
+git clone https://github.com/v8/v8
+git clone https://github.com/Seldaek/monolog
+git clone https://github.com/saltstack/salt
+git clone https://github.com/JetBrains/intellij-community
+git clone https://github.com/rails/rails/
+git clone https://github.com/puppetlabs/puppet/
