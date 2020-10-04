@@ -464,15 +464,20 @@ def main(since, to, urls, inclusion_list):
         for fd in file_doa:
             print(fd[0])
 
+        print()
         print("Missing from Linguist-analysis")
         tmp_inclusion_list = inclusion_list
         for fd in file_doa:
             file = fd[0]
-            if tmp_inclusion_list.__contains__(file):
-                tmp_inclusion_list.remove(file)
+            for e in tmp_inclusion_list:
+                if e.__contains__(file):
+                    tmp_inclusion_list.remove(e)
+
+
         for i in tmp_inclusion_list:
             print(i)
 
+        print()
         print("No. of authors", all_authors.__len__())
         for a in all_authors:           
             count = 0
