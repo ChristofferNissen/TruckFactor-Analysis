@@ -15,6 +15,9 @@ def handle(req):
     arr = req.split("/")
     folderName = arr[arr.__len__()-1] + "/"
 
+    if folderName.__contains__(".git"):
+        folderName = folderName.split(".")[0]
+
     if not os.path.exists(folderName):
         FNULL = open(os.devnull, 'w')
         subprocess.check_output(['git', 'clone', req], stderr=FNULL)

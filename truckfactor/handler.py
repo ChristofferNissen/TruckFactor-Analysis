@@ -118,14 +118,12 @@ def analyse(since, to, url):
     
     # PRINT FUNCTIONS
 
-    def printIntro():
+    def printIntro(project_name):
         # Print program information to user
-        print()
         pyfiglet.print_figlet("VCS Analysis")
         print("by Christoffer Nissen (ChristofferNissen)")
         print()
-        print()
-        print("Analysing", url)
+        print("Analyzing", url)
         print("Project Name:", project_name)
         print("Since:", since)
         print("To:", to)
@@ -136,8 +134,9 @@ def analyse(since, to, url):
         print("External committers:", external_authors.__len__())
 
     def printLinguist(inclusion_list, responseText):
-        pyfiglet.print_figlet("Linguist Analysis")
-        print("Inclusion_list_length", inclusion_list.__len__())
+        pyfiglet.print_figlet("Linguist")
+        print("Linguist generated inclusion_list with length", inclusion_list.__len__())
+        print("Project Language Distribution:")
         print(responseText)
 
     def printTop10Committers(collection):
@@ -585,7 +584,7 @@ def analyse(since, to, url):
     (project_name, count, merges, all_authors, author_commit_dict, 
     internal_authors, external_authors, code_changes, _) = ExtractFromCommits(since, to, url)
 
-    printIntro()
+    printIntro(project_name)
     printLinguist(inclusion_list, responseText)
     printTop10Committers(author_commit_dict)
     #printBottom10Committers(author_commit_dict)
