@@ -1,6 +1,8 @@
 import subprocess
 import os
 import shutil
+import io
+from contextlib import redirect_stdout
 
 def handle(req):
     """handle a request to the function
@@ -8,12 +10,17 @@ def handle(req):
         req (str): request body
     """
 
-    if not os.path.exists("repository/"):
-        subprocess.check_output(['git', 'clone', req, 'repository'])
+    f = io.StringIO()
+    with redirect_stdout(f):
 
-    try:
-        output = subprocess.check_output(['github-linguist --breakdown'], text=True, cwd="repository/", shell=True)
-    finally:
-        shutil.rmtree("repository/")
+        if not os.path.exists("repository/"):
+            res = subprocess.check_output(['git', 'clone', req, 'repository'], text=True)
+        try:
+            output = subprocess.check_output(['github-linguist --breakdown'], text=True, cwd="repository/", shell=True)
+            print(output)
+        finally:
+            shutil.rmtree("repository/")
+    
+    out = f.getvalue()
 
-    return output
+    return out

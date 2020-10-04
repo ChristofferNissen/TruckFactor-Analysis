@@ -93,7 +93,9 @@ def handle(req):
         with redirect_stdout(f):
             responseText = requests.post('https://gateway.christoffernissen.me/function/linguist-caller', data=u).text
             linguist_analysis = responseText.split("\n")
-            inclusion_list = parseLinguistResponse(linguist_analysis)            
+            inclusion_list = parseLinguistResponse(linguist_analysis)
+
+            pyfiglet.print_figlet("Linguist Analysis")
             print("Inclusion_list_length", inclusion_list.__len__())
             print(responseText)
 
@@ -472,7 +474,6 @@ def main(since, to, urls, inclusion_list):
             for e in tmp_inclusion_list:
                 if e.__contains__(file):
                     tmp_inclusion_list.remove(e)
-
 
         for i in tmp_inclusion_list:
             print(i)
