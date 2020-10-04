@@ -251,7 +251,7 @@ def analyse(since, to, url, excludes):
                 if addToCollection:
                     files_for_analysis.append(file)
 
-            print("removed", changedFiles.__len__() - files_for_analysis.__len__())
+            #print("removed", changedFiles.__len__() - files_for_analysis.__len__())
 
             for file in files_for_analysis:
                 filename = file.filename
