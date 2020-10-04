@@ -36,4 +36,4 @@ def handle(req):
         print("Linguist took:", linguistDone-cloneDone, "s")
         print("Total:", linguistDone-start, "s")
     
-    return f.getvalue()
+    return f.getvalue().strip()
