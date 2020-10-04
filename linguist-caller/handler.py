@@ -22,10 +22,12 @@ def handle(req):
             shutil.rmtree("repository/")
     
     out = f.getvalue()
-    arr = out.split('\n', 2)[1]
+    
+    arr = out.split('\n')
 
     res = ""
     for l in arr:
-        res = res + l
+        if not l == "Cloning into 'repository'...":
+            res = res + l
 
     return res
