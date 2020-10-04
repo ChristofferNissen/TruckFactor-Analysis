@@ -30,7 +30,7 @@ def handle(req):
             shutil.rmtree(folderName)
         linguistDone = time.time()
         print("Clone took:", cloneDone-start, "s")
-        print("Linguist took:", linguistDone-start, "s")
+        print("Linguist took:", linguistDone-cloneDone, "s")
         print("Total:", linguistDone-start, "s")
     
     return f.getvalue()
