@@ -67,7 +67,7 @@ def handle(req):
     def parseLinguistResponse(res):
         code_files = []
         for l in res:
-            if not l.__contains__(":") or not l.__contains__("...") or not l.__contains__("%"):
+            if not l.__contains__(":") and not l.__contains__("...") and not l.__contains__("%"):
                 code_files.append(l)
         return code_files
 
@@ -94,7 +94,7 @@ def handle(req):
             linguist_analysis = requests.post('https://gateway.christoffernissen.me/function/linguist-caller', data=u).text
             inclusion_list = parseLinguistResponse(linguist_analysis)            
             print("Inclusion_list_length", inclusion_list.__len__())
-            
+
             tf = tf + main(since, to, u)
             
         out = f.getvalue()
