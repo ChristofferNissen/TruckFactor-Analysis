@@ -230,7 +230,7 @@ def analyse(since, to, url, excludes):
             changedFiles = commit.modifications
 
             # remove files that match exclude paths
-            files_for_analysis = changedFiles
+            files_for_analysis = []
             for file in changedFiles:
                 path = ""
 
@@ -239,13 +239,17 @@ def analyse(since, to, url, excludes):
                 else:
                     path = file.old_path
                 
+                addToCollection = True
                 for exclude_path in excludes:
                     # maybe handle wildcard here
                     if exclude_path in path:
                         if file in files_for_analysis:
-                            files_for_analysis.remove(file)
+                            #files_for_analysis.remove(file)
+                            addToCollection = False
                             if (file.filename, exclude_path) not in excluded_files:
                                 excluded_files.append((file.filename, exclude_path))
+                if addToCollection:
+                    files_for_analysis.append(file)
 
             print("removed", changedFiles.__len__() - files_for_analysis.__len__())
 
@@ -356,7 +360,7 @@ def analyse(since, to, url, excludes):
                         result.append(line)
                 return result
 
-            def GetFilesWithAbsoluteNoOfChanges():
+            def GetFilesWithAbsoluteNumOfChanges():
                 result = []
                 for line in CreateMapOfCommitAdditionsAndDeletesPerFileName():
                     result.append((line[0], line[1]+line[2]))
@@ -366,7 +370,7 @@ def analyse(since, to, url, excludes):
                 # Contains normalized DOA for each author on each file
                 res = []
 
-                files = sorted(GetFilesWithAbsoluteNoOfChanges(), key=lambda tup: tup[1], reverse=True)
+                files = sorted(GetFilesWithAbsoluteNumOfChanges(), key=lambda tup: tup[1], reverse=True)
                 for line in files:
                     print("Currently processing", line)
                     fname = line[0]
