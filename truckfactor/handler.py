@@ -577,13 +577,13 @@ def analyse(since, to, url):
         return tf
 
     # PROGRAM FLOW
-    (inclusion_list, responseText) = getInclusionListFromLinguist(url)
+    #(inclusion_list, responseText) = getInclusionListFromLinguist(url)
 
     (count, merges, all_authors, author_commit_dict, 
     internal_authors, external_authors, code_changes, _) = ExtractFromCommits(since, to, url)
 
     printIntro()
-    printLinguist(inclusion_list, responseText)
+    #printLinguist(inclusion_list, responseText)
     printTop10Committers(author_commit_dict)
     #printBottom10Committers(author_commit_dict)
     FileOverview()
