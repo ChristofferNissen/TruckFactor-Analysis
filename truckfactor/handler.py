@@ -91,11 +91,13 @@ def handle(req):
     for u in urls: 
         f = io.StringIO()
         with redirect_stdout(f):
-            linguist_analysis = requests.post('https://gateway.christoffernissen.me/function/linguist-caller', data=u).text.split("\n")
+            responseText = requests.post('https://gateway.christoffernissen.me/function/linguist-caller', data=u).text
+            linguist_analysis = responseText.split("\n")
             inclusion_list = parseLinguistResponse(linguist_analysis)            
             print("Inclusion_list_length", inclusion_list.__len__())
+            print(responseText)
 
-            tf = tf + main(since, to, u)
+            tf = tf + main(since, to, u, inclusion_list)
             
         out = f.getvalue()
         report = report + "\n" + out
@@ -123,7 +125,7 @@ def DOA(FA, DL, AC):
     return (3.293 + 1.098 * FA + 0.164 * DL - 0.321 * math.log(1 + AC))
 
 # Main loop
-def main(since, to, urls):
+def main(since, to, urls, inclusion_list):
 
     # limit to time of writing script for reproduceable results
     commits = RepositoryMining(path_to_repo=urls, since=since ,to=to)
@@ -459,6 +461,18 @@ def main(since, to, urls):
         filesWithAuthors = []
         authorAndCount = []
         print("No. of files", file_doa.__len__())
+        for fd in file_doa:
+            print(fd[0])
+
+        print("Missing from Linguist-analysis")
+        tmp_inclusion_list = inclusion_list
+        for fd in file_doa:
+            file = fd[0]
+            if tmp_inclusion_list.__contains__(file):
+                tmp_inclusion_list.remove(file)
+        for i in tmp_inclusion_list:
+            print(i)
+
         print("No. of authors", all_authors.__len__())
         for a in all_authors:           
             count = 0
