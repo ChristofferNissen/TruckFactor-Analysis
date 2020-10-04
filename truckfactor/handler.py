@@ -241,8 +241,9 @@ def analyse(since, to, url, excludes):
                 
                 for exclude_path in excludes:
                     # maybe handle wildcard here
-                    print(exclude_path)
-                    print(path)
+                    print("exclude", exclude_path)
+                    print("path", path)
+                    print("in", exclude_path in path) 
                     if exclude_path in path:
                         if file in files_for_analysis:
                             files_for_analysis.remove(file)
