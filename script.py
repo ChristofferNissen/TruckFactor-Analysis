@@ -7,6 +7,7 @@ import emoji
 import io
 from contextlib import redirect_stdout
 import os
+
 # Colors for terminal output
 class bcolors:
     HEADER = '\033[95m'
@@ -23,10 +24,10 @@ def DOA(FA, DL, AC):
     return (3.293 + 1.098 * FA + 0.164 * DL - 0.321 * math.log(1 + AC))
 
 # Main loop
-def main(since, to, urls):
+def run_analysis(since, to, url):
 
     # limit to time of writing script for reproduceable results
-    commits = RepositoryMining(path_to_repo=urls, since=since ,to=to)
+    commits = RepositoryMining(path_to_repo=url, since=since ,to=to)
 
     count = 0       # number of commits
     merges = 0      # number of merges
@@ -39,12 +40,12 @@ def main(since, to, urls):
     iac_changes = []
     iac_files = []
     project_name = ""
+    # parse commits and mine information. Runs in O(numOfCommits*CommitModifications) O(n)
     for commit in commits.traverse_commits():
         if not project_name == "":
             project_name = commit.project_name
 
         msg = commit.msg
-
         author = commit.author.email
         org_author = commit.committer.email
         count = count + 1
@@ -52,7 +53,7 @@ def main(since, to, urls):
         if commit.merge:
             merges = merges + 1
 
-        # extract files in this commit
+        # parse files in this commit
         changedFiles = commit.modifications
         for file in changedFiles:
             filename = file.filename
@@ -73,7 +74,7 @@ def main(since, to, urls):
                 if not iac_files.__contains__(filename):
                     iac_files.append(filename)
 
-        # Create overall collection of all authors independnt of company
+        # Create overall collection of all authors independnt of company and count number of commits
         if not all_authors.__contains__(author):
             all_authors.append(author)
             author_commit_dict[author] = 1
@@ -89,8 +90,9 @@ def main(since, to, urls):
                 external_authors.append(author)
 
     # for loop end.
-    # VCS commit parse done
+    # commit parsing done
 
+    # Prints the header information. Can be enabled/disabled in PROGRAM FLOW below
     def printIntro():
         # Print program information to user
         print()
@@ -98,7 +100,7 @@ def main(since, to, urls):
         print("by Christoffer Nissen (ChristofferNissen)")
         print()
         print()
-        print("Analysing", urls)
+        print("Analysing", url)
         print("Project Name:", project_name)
         print("Since:", since)
         print("To:", to)
@@ -108,6 +110,7 @@ def main(since, to, urls):
         print("Internal committers:", internal_authors.__len__())
         print("External committers:", external_authors.__len__())
 
+    # Prints the Top 10 Committers. Can be enabled/disabled in PROGRAM FLOW below
     def printTop10Committers(collection):
         print()
         print("Top committers")
@@ -117,6 +120,7 @@ def main(since, to, urls):
             print("[",i,"]", "Email:", tc, "Count:", collection[tc], "Total %", collection[tc]/count*100)
             i = i + 1
 
+    # Prints the Bottom 10 Committers. Can be enabled/disabled in PROGRAM FLOW below
     def printBottom10Committers(collection):
         print()
         print("Bottom comitters")
@@ -239,10 +243,11 @@ def main(since, to, urls):
                 total_lines_changed = 0
                 for c in changes:
                     total_lines_changed = total_lines_changed + c[4] + c[5]
+
                 authorChanges[a] = total_lines_changed
 
-            # calculate DOA for each contributere
-            result = []
+            # calculate DOA for each contributer
+            author_doa = []
             for a in authors:
                 # FA = 1 if d is the creator if the file
                 # DL number of changes made to this file by the d
@@ -255,7 +260,7 @@ def main(since, to, urls):
                 doa = DOA(FA, DL, AC)
                 #print("DOA", doa, "FA", FA, "DL", DL, "AC", AC)
 
-                result.append((a, doa))
+                author_doa.append((a, doa))
 
             def StandardizeValues(collection):
                 # normalize value. calculate Z
@@ -317,14 +322,14 @@ def main(since, to, urls):
                     result.append((e[0],x_new))
                 return result
 
-            result = NormalizeValues(result)
+            author_doa_normalized = NormalizeValues(author_doa)
             #result = StandardizeValues(result)
             
             print("Calculating DOA for file", fname)
 
             # Print results for top 10 files
-            final_sorted_list_for_file = sorted(result, key=lambda tup: tup[1], reverse=True)[:5]
-            for l in final_sorted_list_for_file:
+            author_doa_normalized_sorted_topfive = sorted(author_doa_normalized, key=lambda tup: tup[1], reverse=True)[:5]
+            for l in author_doa_normalized_sorted_topfive:
                 if l[1] > 0.75:
                     print(f"{bcolors.OKGREEN}--> {l}{bcolors.ENDC}")
                 else:
@@ -332,7 +337,7 @@ def main(since, to, urls):
 
             print()
             
-            file_doa.append((fname, final_sorted_list_for_file))
+            file_doa.append((fname, author_doa_normalized_sorted_topfive))
 
         #calculate truck factor
         #iterate through authors, checking that they are 'owners' of atleast 50% of the articles
@@ -412,19 +417,6 @@ def main(since, to, urls):
             else:
                 break
 
-
-        # tf = 0
-        # for t in authorAndCount:
-        #     a = t[0]
-        #     count = t[1]
-
-        #     if totalCount / file_doa.__len__() > 0.5:
-        #         # remove author from collection (will remove count from total count)
-        #         totalCount = totalCount - count
-        #         tf = tf + 1
-        #     else:
-        #         break
-
         print()
         print("The Truck Factor for this project is")
         print()
@@ -446,20 +438,22 @@ def main(since, to, urls):
 
 
 urls = [
-         "https://github.com/Praqma/helmsman",
-        # "https://github.com/fzaninotto/Faker",
-        # "https://github.com/android/platform_frameworks_base",
-        # "https://github.com/moment/moment",
-        # "https://github.com/php/php-src",
-        # "https://github.com/odoo/odoo",
-        # "https://github.com/fog/fog",
-        # "https://github.com/git/git",
-        # "https://github.com/v8/v8",
-        # "https://github.com/Seldaek/monolog",
-        # "https://github.com/saltstack/salt",
-        # "https://github.com/JetBrains/intellij-community",
-        # "https://github.com/rails/rails/"
-        # "https://github.com/puppetlabs/puppet/"
+        "https://github.com/Praqma/helmsman",
+        "https://github.com/rabbitmq/rabbitmq-server",
+        "https://github.com/docker/docker-ce",
+        "https://github.com/docker/cli",
+        "https://github.com/jenkinsci/jenkins",
+        "https://github.com/prometheus/prometheus",
+        "https://github.com/grafana/grafana",
+        "https://github.com/apache/kafka",
+        "https://github.com/kubernetes/ingress-nginx",
+        "https://github.com/kubernetes/kubernetes",
+        "https://github.com/golang/go",
+        #"https://github.com/torvalds/linux",
+        "https://github.com/microsoft/vscode",
+        "https://github.com/ohmyzsh/ohmyzsh",
+        "https://github.com/tensorflow/tensorflow",
+        "https://github.com/puppetlabs/puppet/"
         ]
 since = None
 #to = datetime(2016, 4, 22, 0, 0)
@@ -468,7 +462,7 @@ to = datetime(2020, 9, 28, 0, 0)
 for url in urls:
     f = io.StringIO()
     with redirect_stdout(f):
-        main(since, to, url)
+        run_analysis(since, to, url)
         
     out = f.getvalue()
     arr = url.split("/")

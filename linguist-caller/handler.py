@@ -7,7 +7,6 @@ def handle(req):
     """
 
     subprocess.check_output(['git', 'clone', req, 'repository'])
-    subprocess.check_output(['cd', 'repository'])
-    output = subprocess.check_output(['github-linquist', '--breakdown'], text=True)
+    output = subprocess.check_output(['github-linquist', '--breakdown'], text=True, cwd="repository/")
     
     return output
