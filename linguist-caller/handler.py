@@ -12,7 +12,7 @@ def handle(req):
         subprocess.check_output(['git', 'clone', req, 'repository'])
 
     try:
-        output = subprocess.check_output(['github-linquist', '--breakdown'], text=True, cwd="repository/", shell=True)
+        output = subprocess.check_output(['github-linguist', '--breakdown'], text=True, cwd="repository/", shell=True)
     finally:
         shutil.rmtree("repository/")
 
