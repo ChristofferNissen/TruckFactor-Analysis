@@ -14,7 +14,7 @@ def handle(req):
     with redirect_stdout(f):
 
         if not os.path.exists("repository/"):
-            res = subprocess.check_output(['git', 'clone', req, 'repository'], text=True)
+            subprocess.check_output(['git', 'clone', req, 'repository'], text=True)
         try:
             output = subprocess.check_output(['github-linguist --breakdown'], text=True, cwd="repository/", shell=True)
             print(output)
@@ -22,5 +22,10 @@ def handle(req):
             shutil.rmtree("repository/")
     
     out = f.getvalue()
+    arr = out.split('\n', 1)[1]
 
-    return out
+    res = ""
+    for l in arr:
+        res = res + l
+
+    return res
