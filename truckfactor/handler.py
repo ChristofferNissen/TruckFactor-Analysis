@@ -483,7 +483,9 @@ def analyse(since, to, url):
                         tmp_inclusion_list.remove(e)
 
             for i in tmp_inclusion_list:
-                print(i)
+                val = i.replace("\n", "")
+                if not i == "":
+                    print(f"{bcolors.FAIL}{val}{bcolors.ENDC}")
 
             print()
             print("No. of authors", all_authors.__len__())
