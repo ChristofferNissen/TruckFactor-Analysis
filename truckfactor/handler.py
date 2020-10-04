@@ -151,6 +151,7 @@ def analyse(since, to, url, excludes):
         print("Linguist generated inclusion_list with length", inclusion_list.__len__())
         print("Project Language Distribution:")
         print(responseText.strip())
+        print()
 
     def printTop10Committers(collection):
         print("Top committers")
