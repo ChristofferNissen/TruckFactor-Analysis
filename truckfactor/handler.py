@@ -472,7 +472,9 @@ def main(since, to, urls, inclusion_list):
         for fd in file_doa:
             file = fd[0]
             for e in tmp_inclusion_list:
-                if e.__contains__(file):
+                arr = e.split("/")
+                filename = arr[arr.__len__()-1]
+                if filename.__contains__(file):
                     tmp_inclusion_list.remove(e)
 
         for i in tmp_inclusion_list:
