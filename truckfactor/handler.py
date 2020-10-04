@@ -146,10 +146,9 @@ def analyse(since, to, url, excludes):
         pyfiglet.print_figlet("Linguist", font='small')
         print("Linguist generated inclusion_list with length", inclusion_list.__len__())
         print("Project Language Distribution:")
-        print(responseText)
+        print(responseText.strip())
 
     def printTop10Committers(collection):
-        print()
         print("Top committers")
         top10commiters = sorted(collection, key=collection.get, reverse=True)[:10]
         i = 1
@@ -605,7 +604,7 @@ def analyse(since, to, url, excludes):
         print()
         print("The Truck Factor for this project is")
         print()
-        pyfiglet.print_figlet("  //  " + str(tf) + "  //  ", font='slant')
+        pyfiglet.print_figlet("  //  " + str(tf) + "  //  ", font='univers')
         
         if tf < 2:
             print("Your project has a low truck factor. Only a single person have to leave the project for it to be in serious danger due to lack of maintainers")
