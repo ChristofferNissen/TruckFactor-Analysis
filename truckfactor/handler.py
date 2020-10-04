@@ -78,7 +78,6 @@ def handle(req):
         else:
             return "OK"
 
-Enumerating objects: 7, done.
     def parseJSON(json_string):
         # parse JSON input string
         data = json.loads(json_string)
