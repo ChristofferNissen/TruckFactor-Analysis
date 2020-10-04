@@ -11,7 +11,7 @@ functions:
       write_timeout: 15m
       read_timeout: 15m
       exec_timeout: 15m
-  linguist:
-    lang: dockerfile
-    handler: ./linguist
-    image: stifstof/linguist:latest
+  linguist-caller:
+    lang: python3-ruby-armhf
+    handler: ./linguist-caller
+    image: stifstof/linguist-caller:latest

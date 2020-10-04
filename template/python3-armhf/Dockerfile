@@ -5,6 +5,8 @@ FROM python:3-alpine
 # Allows you to add additional packages via build-arg
 ARG ADDITIONAL_PACKAGE
 
+RUN apk add git
+
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
 RUN chmod +x /usr/bin/fwatchdog
 RUN apk --no-cache add ${ADDITIONAL_PACKAGE}
@@ -51,9 +53,3 @@ EXPOSE 8080
 HEALTHCHECK --interval=3s CMD [ -e /tmp/.lock ] || exit 1
 
 CMD ["fwatchdog"]
-
-USER root
-
-RUN apk add git
-
-USER app
