@@ -155,7 +155,8 @@ def analyse(since, to, url, excludes):
         print()
 
     def printTop10Committers(collection):
-        print("Top committers")
+        pyfiglet.print_figlet("The Top 10s", font='small')
+        print("Top 10 committers")
         top10commiters = sorted(collection, key=collection.get, reverse=True)[:10]
         i = 1
         for tc in top10commiters:
@@ -177,11 +178,11 @@ def analyse(since, to, url, excludes):
         file_deletions = sorted(changes_per_file, key=lambda tup: tup[2], reverse=True)[:10]
 
         print()
-        print("Top files with most additions")
+        print("Top 10 files with most additions")
         for line in file_additions:
             print(line)
         print()
-        print("Top files with most deletions")    
+        print("Top 10 files with most deletions")    
         for line in file_deletions:
             print(line)
 
