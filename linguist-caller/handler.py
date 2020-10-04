@@ -10,26 +10,18 @@ def handle(req):
         req (str): request body
     """
 
-    if not os.path.exists("repository/"):
-        subprocess.check_output(['git', 'clone', req, 'repository'], text=True)
+    arr = req.split("/")
+    folderName = arr[arr.__len__()-1] + "/"
+
+    if not os.path.exists(folderName):
+        subprocess.check_output(['git', 'clone', req], text=True)
     
     f = io.StringIO()
     with redirect_stdout(f):
         try:
-            output = subprocess.check_output(['github-linguist --breakdown'], text=True, cwd="repository/", shell=True)
+            output = subprocess.check_output(['github-linguist --breakdown'], text=True, cwd=folderName, shell=True)
             print(output)
         finally:
-            shutil.rmtree("repository/")
+            shutil.rmtree(folderName)
     
-    out = f.getvalue()
-    
-    arr = out.split('\n', 2)[2]
-
-    res = ""
-    for l in arr:
-        if not res == "":
-            res = res + l + "\n"
-        else: 
-            res = l + "\n"
-
-    return res
+    return f.getvalue()
