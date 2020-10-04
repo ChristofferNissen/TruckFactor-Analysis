@@ -3,12 +3,14 @@ import os
 import shutil
 import io
 from contextlib import redirect_stdout
+import time
 
 def handle(req):
     """handle a request to the function
     Args:
         req (str): request body
     """
+    start = time.time()
 
     arr = req.split("/")
     folderName = arr[arr.__len__()-1] + "/"
@@ -17,6 +19,8 @@ def handle(req):
         FNULL = open(os.devnull, 'w')
         subprocess.check_output(['git', 'clone', req], stderr=FNULL)
     
+    cloneDone = time.time()
+
     f = io.StringIO()
     with redirect_stdout(f):
         try:
@@ -24,5 +28,9 @@ def handle(req):
             print(output)
         finally:
             shutil.rmtree(folderName)
+        linguistDone = time.time()
+        print("Clone took:", cloneDone-start, "s")
+        print("Linguist took:", linguistDone-start, "s")
+        print("Total:", linguistDone-start, "s")
     
     return f.getvalue()
