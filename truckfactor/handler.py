@@ -91,7 +91,7 @@ def handle(req):
     for u in urls: 
         f = io.StringIO()
         with redirect_stdout(f):
-            linguist_analysis = requests.post('https://gateway.christoffernissen.me/function/linguist-caller', data=u).text
+            linguist_analysis = requests.post('https://gateway.christoffernissen.me/function/linguist-caller', data=u).text.split("\n")
             inclusion_list = parseLinguistResponse(linguist_analysis)            
             print("Inclusion_list_length", inclusion_list.__len__())
 
