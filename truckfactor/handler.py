@@ -241,14 +241,13 @@ def analyse(since, to, url, excludes):
                 
                 for exclude_path in excludes:
                     # maybe handle wildcard here
-                    print("exclude", exclude_path)
-                    print("path", path)
-                    print("in", exclude_path in path) 
                     if exclude_path in path:
                         if file in files_for_analysis:
                             files_for_analysis.remove(file)
                             if (file.filename, exclude_path) not in excluded_files:
                                 excluded_files.append((file.filename, exclude_path))
+
+            print("removed", changedFiles.__len__() - files_for_analysis.__len__())
 
             for file in files_for_analysis:
                 filename = file.filename
