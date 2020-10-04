@@ -66,9 +66,14 @@ RUN chown -R app:app ./ && \
 
 USER app
 
+ENV PATH=$PATH:/usr/local/bundle/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/app/.local/bin:/home/app/python/bin/
 ENV fprocess="python3 index.py"
 EXPOSE 8080
 
 HEALTHCHECK --interval=3s CMD [ -e /tmp/.lock ] || exit 1
 
 CMD ["fwatchdog"]
+
+# RUN git clone https://github.com/Praqma/helmsman
+# WORKDIR helmsman
+# RUN github-linguist
