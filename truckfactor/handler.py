@@ -126,7 +126,7 @@ def analyse(since, to, url):
         print()
         print()
         print("Analysing", url)
-        print("Project Name:", commit.project_name)
+        print("Project Name:", project_name)
         print("Since:", since)
         print("To:", to)
         print("Total number of commits", count)
@@ -191,6 +191,7 @@ def analyse(since, to, url):
         commits = RepositoryMining(path_to_repo=url, since=since ,to=to)
 
         # Data extraction variables
+        project_name = ""
         count = 0
         merges = 0
         all_authors = []
@@ -200,6 +201,8 @@ def analyse(since, to, url):
         code_changes = []
         iac_changes = []
         for commit in commits.traverse_commits():
+            if not project_name == "":
+                project_name = commit.project_name 
             msg = commit.msg
 
             author = commit.author.email
@@ -243,7 +246,7 @@ def analyse(since, to, url):
                 if not external_authors.__contains__(author):
                     external_authors.append(author)
 
-        return (count, merges, all_authors, author_commit_dict, internal_authors, external_authors, code_changes, iac_changes)
+        return (project_name, count, merges, all_authors, author_commit_dict, internal_authors, external_authors, code_changes, iac_changes)
 
     def CreateMapOfCommitAdditionsAndDeletesPerFileName():
         # collections to keep tmp count
@@ -459,7 +462,7 @@ def analyse(since, to, url):
             
             return GetNormalizedDOAForEachAuthorOnEachFile()
 
-        def ParseOrganizedData(file_author_doa):
+        def ParseOrganizedData(file_author_doa, inclusion_list):
             fileWithFileAuthor = []
             fileAuthors = []
             filesWithAuthors = []
@@ -557,7 +560,7 @@ def analyse(since, to, url):
             return tf
 
         file_author_doa = OrganizeData()    
-        (fileWithFileAuthor, fileAuthors, filesWithAuthors, authorAndCount) = ParseOrganizedData(file_author_doa)
+        (fileWithFileAuthor, fileAuthors, _, authorAndCount) = ParseOrganizedData(file_author_doa, inclusion_list)
         printNumberOfAuthors(fileAuthors)
         printAuthorInformation(authorAndCount)
 
@@ -577,13 +580,13 @@ def analyse(since, to, url):
         return tf
 
     # PROGRAM FLOW
-    #(inclusion_list, responseText) = getInclusionListFromLinguist(url)
+    (inclusion_list, responseText) = getInclusionListFromLinguist(url)
 
-    (count, merges, all_authors, author_commit_dict, 
+    (project_name, count, merges, all_authors, author_commit_dict, 
     internal_authors, external_authors, code_changes, _) = ExtractFromCommits(since, to, url)
 
     printIntro()
-    #printLinguist(inclusion_list, responseText)
+    printLinguist(inclusion_list, responseText)
     printTop10Committers(author_commit_dict)
     #printBottom10Committers(author_commit_dict)
     FileOverview()
