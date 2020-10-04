@@ -7,6 +7,7 @@ import emoji
 import io
 from contextlib import redirect_stdout
 import json
+import requests
 
 def handle(req):
     """handle a request to the function
@@ -45,7 +46,6 @@ def handle(req):
         --header "X-Callback-Url: http://192.168.1.112:8888"
     '''
 
-
     if req == "" or not req.__contains__("urls") or not req.__contains__("since") or not req.__contains__("to") or not req.__contains__("returnType"):
         return """ 
         Input missing. Please provide JSON as in this example:
@@ -63,6 +63,13 @@ def handle(req):
                 Report: Contatinated together to one response body
                 Number: Sum of tf for all repositories
         """
+
+    def parseLinguistResponse(res):
+        code_files = []
+        for l in res:
+            if not l.__contains__(":") or not l.__contains__("...") or not l.__contains__("%"):
+                code_files.append(l)
+        return code_files
 
     # parse JSON input string
     data = json.loads(req)
@@ -84,6 +91,10 @@ def handle(req):
     for u in urls: 
         f = io.StringIO()
         with redirect_stdout(f):
+            linguist_analysis = requests.post('https://gateway.christoffernissen.me/function/linguist-caller', data=u).text
+            inclusion_list = parseLinguistResponse(linguist_analysis)            
+            print("Inclusion_list_length", inclusion_list.__len__())
+            
             tf = tf + main(since, to, u)
             
         out = f.getvalue()
