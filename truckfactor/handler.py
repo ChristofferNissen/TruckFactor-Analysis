@@ -330,7 +330,7 @@ def analyse(since, to, url):
                 # Contains normalized DOA for each author on each file
                 res = []
 
-                files = GetFilesWithAbsoluteNoOfChanges()
+                files = sorted(GetFilesWithAbsoluteNoOfChanges(), key=lambda tup: tup[1], reverse=True)
                 for line in files:
                     print("Currently processing", line)
                     fname = line[0]
