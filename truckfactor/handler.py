@@ -243,11 +243,11 @@ def analyse(since, to, url, excludes):
                 for exclude_path in excludes:
                     # maybe handle wildcard here
                     if exclude_path in path:
-                        if file in files_for_analysis:
+                        #if file in files_for_analysis:
                             #files_for_analysis.remove(file)
-                            addToCollection = False
-                            if (file.filename, exclude_path) not in excluded_files:
-                                excluded_files.append((file.filename, exclude_path))
+                        addToCollection = False
+                        if (file.filename, exclude_path) not in excluded_files:
+                            excluded_files.append((file.filename, exclude_path))
                 if addToCollection:
                     files_for_analysis.append(file)
 
