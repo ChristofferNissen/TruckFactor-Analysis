@@ -313,7 +313,7 @@ def analyse(since, to, url, excludes):
 
     def CalculateTruckFactor():
         print()
-        pyfiglet.print_figlet("TRUCK FACTOR", font='small')
+        pyfiglet.print_figlet("Ownership Calc.", font='small')
         print()
 
         def OrganizeData():
@@ -572,6 +572,9 @@ def analyse(since, to, url, excludes):
 
         def printAuthorInformation(list):
             print("Author(s) with file ownership:")
+
+            # sort
+
             for t in authorAndCount:
                 a = t[0]
                 count = t[1]
@@ -598,7 +601,6 @@ def analyse(since, to, url, excludes):
                         uq = uq + 1
 
                 ratio = uq / file_author_doa.__len__()
-                print("file_author_doa length", file_author_doa.__len__())
 
                 if ratio > 0.5:
                     tf = tf + 1 
@@ -616,6 +618,8 @@ def analyse(since, to, url, excludes):
 
         file_author_doa = OrganizeData()    
         (fileWithFileAuthor, fileAuthors, _, authorAndCount) = ParseOrganizedData(file_author_doa, inclusion_list)
+
+        pyfiglet.print_figlet("Truck Factor Calc.", font='universe')
         printNumberOfAuthors(fileAuthors)
         printAuthorInformation(authorAndCount)
 
