@@ -618,7 +618,7 @@ def analyse(since, to, url, excludes):
         file_author_doa = OrganizeData()    
         (fileWithFileAuthor, fileAuthors, _, authorAndCount) = ParseOrganizedData(file_author_doa, inclusion_list)
 
-        pyfiglet.print_figlet("Truck Factor Calc.", font='universe')
+        pyfiglet.print_figlet("Truck Factor Calc.", font='univers')
         printNumberOfAuthors(fileAuthors)
         printAuthorInformation(authorAndCount)
 
