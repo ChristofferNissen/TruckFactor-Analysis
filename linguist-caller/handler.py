@@ -10,11 +10,11 @@ def handle(req):
         req (str): request body
     """
 
+    if not os.path.exists("repository/"):
+        subprocess.check_output(['git', 'clone', req, 'repository'], text=True)
+    
     f = io.StringIO()
     with redirect_stdout(f):
-
-        if not os.path.exists("repository/"):
-            subprocess.check_output(['git', 'clone', req, 'repository'], text=True)
         try:
             output = subprocess.check_output(['github-linguist --breakdown'], text=True, cwd="repository/", shell=True)
             print(output)
@@ -23,11 +23,13 @@ def handle(req):
     
     out = f.getvalue()
     
-    arr = out.split('\n')
+    arr = out.split('\n', 2)[2]
 
     res = ""
     for l in arr:
-        if not l == "Cloning into 'repository'...":
-            res = res + l
+        if not res == "":
+            res = res + l + "\n"
+        else: 
+            res = l + "\n"
 
     return res
