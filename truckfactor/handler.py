@@ -571,12 +571,12 @@ def analyse(since, to, url, excludes):
         def printNumberOfAuthors(alist):
             print("No. of authors with ownership", alist.__len__())
 
-        def printAuthorInformation(list):
+        def printAuthorInformation(collection):
             print("Author(s) with file ownership:")
 
-            # sort
+            sortedCollection = sorted(collection, key=lambda tup: tup[1])
 
-            for t in authorAndCount:
+            for t in sortedCollection:
                 a = t[0]
                 count = t[1]
                 if count > 0:
@@ -621,6 +621,7 @@ def analyse(since, to, url, excludes):
         (fileWithFileAuthor, fileAuthors, _, authorAndCount) = ParseOrganizedData(file_author_doa, inclusion_list)
 
         pyfiglet.print_figlet("Truck Factor Calc.", font='small')
+        print()
         printNumberOfAuthors(fileAuthors)
         printAuthorInformation(authorAndCount)
 
