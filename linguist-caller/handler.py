@@ -22,7 +22,7 @@ def handle(req):
             shutil.rmtree("repository/")
     
     out = f.getvalue()
-    arr = out.split('\n', 1)[1]
+    arr = out.split('\n', 2)[1]
 
     res = ""
     for l in arr:
