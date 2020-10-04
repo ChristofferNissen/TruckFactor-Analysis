@@ -10,6 +10,11 @@ RUN apk add git
 RUN apk add python3
 RUN python3 --version
 
+# Ruby environment variables
+ENV GEM_HOME=/usr/local/bundle
+ENV PATH=$PATH:/usr/local/bundle/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+RUN mkdir -p "$GEM_HOME" && chmod 777 "$GEM_HOME"
+
 RUN apk --update add --virtual build_deps \
     build-base \
     libc-dev \
@@ -38,10 +43,6 @@ RUN chown -R app /home/app && \
 USER app
 ENV PATH=$PATH:/home/app/.local/bin:/home/app/python/bin/
 ENV PYTHONPATH=$PYTHONPATH:/home/app/python
-
-# Ruby environment variables
-ENV GEM_HOME=/usr/local/bundle
-ENV PATH=$PATH:/usr/local/bundle/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 RUN pip install -r requirements.txt --target=/home/app/python
 

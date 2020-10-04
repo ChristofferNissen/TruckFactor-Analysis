@@ -40,6 +40,9 @@ def run_analysis(since, to, url):
     iac_changes = []
     iac_files = []
     project_name = ""
+
+    filepath = []
+
     # parse commits and mine information. Runs in O(numOfCommits*CommitModifications) O(n)
     for commit in commits.traverse_commits():
         if not project_name == "":
@@ -57,8 +60,33 @@ def run_analysis(since, to, url):
         changedFiles = commit.modifications
         for file in changedFiles:
             filename = file.filename
+            
+            old = file.old_path
+            new = file.new_path
+            print(old)
+            print(new)
+            # track filepath
+            if old == None:
+                # file is added in this commit
+                if not filepath.__contains__(new):
+                    filepath.append(new)
+            elif new == None:
+                # deleted in this commit
+                if filepath.__contains__(old):
+                    filepath.remove(old)
+            else:
+                # file moved
+                # change old_path in collection to new_path
+                if filepath.__contains__(old):
+                    filepath.remove(old)
+                if not filepath.__contains__(new):
+                    filepath.append(new)
+
+
             loc = file.nloc
             
+            # check if file is in exclude list
+
             if not loc == None:
                 # code files
                 lines_added = file.added
@@ -439,21 +467,21 @@ def run_analysis(since, to, url):
 
 urls = [
         "https://github.com/Praqma/helmsman",
-        "https://github.com/rabbitmq/rabbitmq-server",
-        "https://github.com/docker/docker-ce",
-        "https://github.com/docker/cli",
-        "https://github.com/jenkinsci/jenkins",
-        "https://github.com/prometheus/prometheus",
-        "https://github.com/grafana/grafana",
-        "https://github.com/apache/kafka",
-        "https://github.com/kubernetes/ingress-nginx",
-        "https://github.com/kubernetes/kubernetes",
-        "https://github.com/golang/go",
-        #"https://github.com/torvalds/linux",
-        "https://github.com/microsoft/vscode",
-        "https://github.com/ohmyzsh/ohmyzsh",
-        "https://github.com/tensorflow/tensorflow",
-        "https://github.com/puppetlabs/puppet/"
+        # "https://github.com/rabbitmq/rabbitmq-server",
+        # "https://github.com/docker/docker-ce",
+        # "https://github.com/docker/cli",
+        # "https://github.com/jenkinsci/jenkins",
+        # "https://github.com/prometheus/prometheus",
+        # "https://github.com/grafana/grafana",
+        # "https://github.com/apache/kafka",
+        # "https://github.com/kubernetes/ingress-nginx",
+        # "https://github.com/kubernetes/kubernetes",
+        # "https://github.com/golang/go",
+        # #"https://github.com/torvalds/linux",
+        # "https://github.com/microsoft/vscode",
+        # "https://github.com/ohmyzsh/ohmyzsh",
+        # "https://github.com/tensorflow/tensorflow",
+        # "https://github.com/puppetlabs/puppet/"
         ]
 since = None
 #to = datetime(2016, 4, 22, 0, 0)
