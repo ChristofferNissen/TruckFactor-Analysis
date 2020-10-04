@@ -14,7 +14,8 @@ def handle(req):
     folderName = arr[arr.__len__()-1] + "/"
 
     if not os.path.exists(folderName):
-        subprocess.check_output(['git', 'clone', req], text=True)
+        FNULL = open(os.devnull, 'w')
+        subprocess.check_output(['git', 'clone', req], stderr=FNULL)
     
     f = io.StringIO()
     with redirect_stdout(f):
