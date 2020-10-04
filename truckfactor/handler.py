@@ -120,7 +120,7 @@ def analyse(since, to, url):
 
     def printIntro(project_name):
         # Print program information to user
-        pyfiglet.print_figlet("VCS Analysis")
+        pyfiglet.print_figlet("VCS Analysis", font='slant')
         print("by Christoffer Nissen (ChristofferNissen)")
         print()
         print("Analyzing", url)
@@ -134,7 +134,7 @@ def analyse(since, to, url):
         print("External committers:", external_authors.__len__())
 
     def printLinguist(inclusion_list, responseText):
-        pyfiglet.print_figlet("Linguist")
+        pyfiglet.print_figlet("Linguist", font='small')
         print("Linguist generated inclusion_list with length", inclusion_list.__len__())
         print("Project Language Distribution:")
         print(responseText)
@@ -278,7 +278,7 @@ def analyse(since, to, url):
 
     def CalculateTruckFactor():
         print()
-        pyfiglet.print_figlet("TRUCK FACTOR")
+        pyfiglet.print_figlet("TRUCK FACTOR", font='small')
         print()
 
         def OrganizeData():
@@ -467,11 +467,9 @@ def analyse(since, to, url):
             filesWithAuthors = []
             authorAndCount = []
 
-            print("No. of files", file_author_doa.__len__())
+            print("No. of analyzed files", file_author_doa.__len__())
             for fd in file_author_doa:
                 print(fd[0])
-
-            print()
             print("Missing from Linguist-analysis")
             tmp_inclusion_list = inclusion_list
             for fd in file_author_doa:
@@ -572,7 +570,7 @@ def analyse(since, to, url):
         print()
         print("The Truck Factor for this project is")
         print()
-        pyfiglet.print_figlet("  //  " + str(tf) + "  //  ")
+        pyfiglet.print_figlet("  //  " + str(tf) + "  //  ", font='computer')
         
         if tf < 2:
             print("Your project has a low truck factor. Only a single person have to leave the project for it to be in serious danger due to lack of maintainers")
