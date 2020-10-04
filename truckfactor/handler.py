@@ -510,7 +510,22 @@ def analyse(since, to, url, excludes):
             print("Linguist file overview")
             print("No. of analyzed files:", file_author_doa.__len__())
             for fd in file_author_doa:
-                print(f"{bcolors.OKGREEN}{fd[0]}{bcolors.ENDC}")
+                evictedBy = ""
+                excluded = False
+                filename = fd[0]
+                for t in excluded_files:
+                    fn = t[0]
+                    by = t[1]
+                    if filename == fn:
+                        excluded = True
+                        evictedBy = by
+                if excluded:
+                    excludedBy = "excluded by " + evictedBy
+                    res = filename + f"{bcolors.ITA}{excludedBy}{bcolors.ENDC}"
+                    print(f"{bcolors.OKBLUE}{res}{bcolors.ENDC}")
+                else:
+                    print(f"{bcolors.OKGREEN}{filename}{bcolors.ENDC}")
+
             #print("Missing from Linguist-analysis")
             tmp_inclusion_list = inclusion_list
             for fd in file_author_doa:
