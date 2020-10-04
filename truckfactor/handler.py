@@ -23,7 +23,11 @@ curl "https://gateway.christoffernissen.me/async-function/truckfactor" \
             "https://github.com/Praqma/helmsman.git",
             "https://github.com/ishepard/pydriller.git"
         ],
-        "returnType": "Report" 
+        "returnType": "Report",
+        "excludes": [
+            "Dockerfile",
+            "/some/path"
+        ] 
     }
     ' \
     --header "X-Callback-Url: http://192.168.1.112:8888"
@@ -49,7 +53,7 @@ def handle(req):
 
     def validateInput(req):
         # Validate Input
-        if req == "" or not req.__contains__("urls") or not req.__contains__("since") or not req.__contains__("to") or not req.__contains__("returnType"):
+        if req == "" or not req.__contains__("urls") or not req.__contains__("since") or not req.__contains__("to") or not req.__contains__("returnType") or not req.__contains__("excludes"):
             return """ 
             Input missing. Please provide JSON as in this example:
             {
@@ -59,7 +63,11 @@ def handle(req):
                     "https://github.com/Praqma/helmsman.git",
                     "https://github.com/ishepard/pydriller.git"
                 ],
-                "returnType": "Report", 
+                "returnType": "Report",
+                "excludes": [
+                    "Dockerfile",
+                    "/some/path"
+                ]
             }
                 note: returnType can also be Number for easy programmatic consumption 
                 For multi url requests:
@@ -84,16 +92,17 @@ def handle(req):
             to = datetime(int(toArr[0]), int(toArr[1]), int(toArr[2]), int(toArr[3]), int(toArr[4])) 
         urls = data["urls"]
         returnType = data["returnType"]
-        return (since, to, urls, returnType)
+        excludes = data["excludes"]
+        return (since, to, urls, returnType, excludes)
 
     res = validateInput(req)
     if res == "OK":
-        (since, to, urls, returnType) = parseJSON(req)
-        return run_analysis(since, to, urls, returnType)
+        (since, to, urls, returnType, excludes) = parseJSON(req)
+        return run_analysis(since, to, urls, returnType, excludes)
     else:
         return res
     
-def run_analysis(since, to, urls, returnType):
+def run_analysis(since, to, urls, returnType, excludes):
     # Run Analysis. Aggregate report string and tf holder variable
     report = ""
     tf = 0
@@ -101,7 +110,7 @@ def run_analysis(since, to, urls, returnType):
         # redirect output to string variable
         f = io.StringIO()
         with redirect_stdout(f):
-            tf = tf + analyse(since, to, u)
+            tf = tf + analyse(since, to, u, excludes)
             
         out = f.getvalue()
         report = report + "\n" + out
@@ -114,7 +123,7 @@ def run_analysis(since, to, urls, returnType):
     else:
         return "Unsupported returnType. Use Report or Number"
 
-def analyse(since, to, url):
+def analyse(since, to, url, excludes):
     
     # PRINT FUNCTIONS
 
@@ -185,7 +194,7 @@ def analyse(since, to, url):
         linguist_analysis = responseText.split("\n")
         return (parseLinguistResponse(linguist_analysis), responseText)
 
-    def ExtractFromCommits(since, to, url):
+    def ExtractFromCommits(since, to, url, excludes):
         # limit to time of writing script for reproduceable results
         commits = RepositoryMining(path_to_repo=url, since=since ,to=to)
 
@@ -199,6 +208,7 @@ def analyse(since, to, url):
         external_authors = []
         code_changes = []
         iac_changes = []
+        excluded_files = []
         for commit in commits.traverse_commits():
             if not project_name == "":
                 project_name = commit.project_name 
@@ -213,6 +223,26 @@ def analyse(since, to, url):
 
             # extract files in this commit
             changedFiles = commit.modifications
+
+            # remove files that match exclude paths
+            files_for_analysis = changedFiles
+            for file in changedFiles:
+                path = ""
+
+                if not file.new_path == None:
+                    path = file.new_path
+                else:
+                    path = file.old_path
+                
+                for exclude_path in excludes:
+                    # maybe handle wildcard here
+                    if exclude_path in path:
+                        if file in files_for_analysis:
+                            files_for_analysis.remove(file)
+                            if file not in excluded_files:
+                                excluded_files.append((file.filename, exclude_path))
+
+
             for file in changedFiles:
                 filename = file.filename
 
@@ -245,7 +275,7 @@ def analyse(since, to, url):
                 if not external_authors.__contains__(author):
                     external_authors.append(author)
 
-        return (project_name, count, merges, all_authors, author_commit_dict, internal_authors, external_authors, code_changes, iac_changes)
+        return (project_name, count, merges, all_authors, author_commit_dict, internal_authors, external_authors, code_changes, iac_changes, excluded_files)
 
     def CreateMapOfCommitAdditionsAndDeletesPerFileName():
         # collections to keep tmp count
@@ -483,6 +513,12 @@ def analyse(since, to, url):
                 val = i.replace("\n", "")
                 if not i == "":
                     print(f"{bcolors.FAIL}{val}{bcolors.ENDC}")
+            if excluded_files.__len__() > 0:
+                print("Excluded files")
+            for e in excluded_files:
+                filename = e[0]
+                if not filename == "":
+                    print(f"{bcolors.WARNING}{e}{bcolors.ENDC}")
 
             print()
             print("No. of authors", all_authors.__len__())
@@ -581,7 +617,7 @@ def analyse(since, to, url):
     (inclusion_list, responseText) = getInclusionListFromLinguist(url)
 
     (project_name, count, merges, all_authors, author_commit_dict, 
-    internal_authors, external_authors, code_changes, _) = ExtractFromCommits(since, to, url)
+    internal_authors, external_authors, code_changes, _, excluded_files) = ExtractFromCommits(since, to, url, excludes)
 
     printIntro(project_name)
     printLinguist(inclusion_list, responseText)
