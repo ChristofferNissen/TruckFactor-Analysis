@@ -467,10 +467,10 @@ def analyse(since, to, url):
             filesWithAuthors = []
             authorAndCount = []
 
-            print("No. of analyzed files", file_author_doa.__len__())
+            print("No. of analyzed files:", file_author_doa.__len__())
             for fd in file_author_doa:
-                print(fd[0])
-            print("Missing from Linguist-analysis")
+                print(f"{bcolors.OKGREEN}{fd[0]}{bcolors.ENDC}")
+            #print("Missing from Linguist-analysis")
             tmp_inclusion_list = inclusion_list
             for fd in file_author_doa:
                 file = fd[0]
@@ -479,7 +479,6 @@ def analyse(since, to, url):
                     filename = arr[arr.__len__()-1]
                     if filename.__contains__(file):
                         tmp_inclusion_list.remove(e)
-
             for i in tmp_inclusion_list:
                 val = i.replace("\n", "")
                 if not i == "":
@@ -570,7 +569,7 @@ def analyse(since, to, url):
         print()
         print("The Truck Factor for this project is")
         print()
-        pyfiglet.print_figlet("  //  " + str(tf) + "  //  ", font='computer')
+        pyfiglet.print_figlet("  //  " + str(tf) + "  //  ", font='slant')
         
         if tf < 2:
             print("Your project has a low truck factor. Only a single person have to leave the project for it to be in serious danger due to lack of maintainers")
