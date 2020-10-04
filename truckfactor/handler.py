@@ -203,6 +203,14 @@ def analyse(since, to, url, excludes):
         # limit to time of writing script for reproduceable results
         commits = RepositoryMining(path_to_repo=url, since=since ,to=to)
 
+        def expandExcludes(excludeList):
+
+            for e in excludeList:
+                # find name-chain 
+                e
+
+        expandExcludes(excludes)
+
         # Data extraction variables
         project_name = ""
         count = 0
@@ -645,7 +653,7 @@ def analyse(since, to, url, excludes):
         printAuthorInformation(authorAndCount)
 
         # sort by count
-        authorAndCount = sorted(authorAndCount, key=lambda tup: tup[1], reverse=True)
+        authorAndCount = sorted(authorAndCount, key=lambda tup: tup[1], reverse=False)
         tf = calculateFactor(authorAndCount, fileWithFileAuthor, file_author_doa)
 
         print()
