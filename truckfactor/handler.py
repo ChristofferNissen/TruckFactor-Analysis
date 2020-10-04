@@ -250,7 +250,7 @@ def analyse(since, to, url, excludes):
                             if (file.filename, exclude_path) not in excluded_files:
                                 excluded_files.append((file.filename, exclude_path))
 
-            for file in changedFiles:
+            for file in files_for_analysis:
                 filename = file.filename
 
                 loc = file.nloc
