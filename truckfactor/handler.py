@@ -128,7 +128,7 @@ def analyse(since, to, url, excludes):
     
     # PRINT FUNCTIONS
 
-    def printIntro(project_name):
+    def printIntro(project_name, excludes, expandedExcludes):
         # Print program information to user
         pyfiglet.print_figlet("VCS Analysis", font='slant')
         print("by Christoffer Nissen (ChristofferNissen)")
@@ -144,6 +144,9 @@ def analyse(since, to, url, excludes):
         print("External committers:", external_authors.__len__())
         print("Specified exclude paths:")
         for ep in excludes:
+            print(ep)
+        print("Expanded into:")
+        for ep in expandedExcludes:
             print(ep)
 
     def printLinguist(inclusion_list, responseText):
@@ -727,11 +730,13 @@ def analyse(since, to, url, excludes):
 
     # PROGRAM FLOW
     (inclusion_list, responseText) = getInclusionListFromLinguist(url)
-    excludes = expandExcludeList(url, excludes)
-    (project_name, count, merges, all_authors, author_commit_dict, 
-    internal_authors, external_authors, code_changes, _, excluded_files) = ExtractFromCommits(since, to, url, excludes)
 
-    printIntro(project_name)
+    expandedExcludes = expandExcludeList(url, excludes)
+
+    (project_name, count, merges, all_authors, author_commit_dict, 
+    internal_authors, external_authors, code_changes, _, excluded_files) = ExtractFromCommits(since, to, url, expandedExcludes)
+
+    printIntro(project_name, excludes, expandedExcludes)
     printLinguist(inclusion_list, responseText)
     printTop10Committers(author_commit_dict)
     #printBottom10Committers(author_commit_dict)
