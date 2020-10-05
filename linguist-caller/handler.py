@@ -10,6 +10,7 @@ def handle(req):
     Args:
         req (str): request body
     """
+    
     start = time.time()
 
     arr = req.split("/")

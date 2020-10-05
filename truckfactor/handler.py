@@ -218,7 +218,7 @@ def analyse(since, to, url, excludes):
         iac_changes = []
         excluded_files = []
         for commit in commits.traverse_commits():
-            if not project_name == "":
+            if project_name == "":
                 project_name = commit.project_name 
             msg = commit.msg
 
@@ -510,7 +510,10 @@ def analyse(since, to, url, excludes):
             filesWithAuthors = []
             authorAndCount = []
 
-            print("Linguist file overview")
+            print("Analyzed file overview")
+            print('    ', f"{bcolors.OKGREEN}{'analyzed'}{bcolors.ENDC}")
+            print('    ', f"{bcolors.FAIL}{'not analyzed'}{bcolors.ENDC}")
+            print('    ', f"{bcolors.OKBLUE}{'excluded'}{bcolors.ENDC}")
             print("No. of analyzed files:", file_author_doa.__len__())
             for fd in file_author_doa:
                 evictedBy = ""
@@ -557,15 +560,14 @@ def analyse(since, to, url, excludes):
                     print(f"{bcolors.FAIL}{val}{bcolors.ENDC}")
 
             if excluded_files.__len__() > 0:
+                print()
                 print("Excluded files")
-                print("(filename, excluded_by_path)")
+                print("    (filename, excluded_by_path)")
             for e in excluded_files:
                 filename = e[0]
                 if not filename == "":
-                    print(f"{bcolors.WARNING}{e}{bcolors.ENDC}")
+                    print('    ', f"{bcolors.WARNING}{e}{bcolors.ENDC}")
 
-            print()
-            print("No. of authors", all_authors.__len__())
             for a in all_authors:           
                 count = 0
                 for e in file_author_doa:
@@ -591,12 +593,13 @@ def analyse(since, to, url, excludes):
             return(fileWithFileAuthor, fileAuthors, filesWithAuthors, authorAndCount)
         
         def printNumberOfAuthors(alist):
+            print("No. of authors", all_authors.__len__())
             print("No. of authors with ownership", alist.__len__())
 
         def printAuthorInformation(collection):
             print("Author(s) with file ownership:")
 
-            sortedCollection = sorted(collection, key=lambda tup: tup[1])
+            sortedCollection = sorted(collection, key=lambda tup: tup[1], reverse=True)
 
             for t in sortedCollection:
                 a = t[0]
@@ -646,7 +649,6 @@ def analyse(since, to, url, excludes):
         print()
 
         printNumberOfAuthors(fileAuthors)
-        authorAndCount = sorted(authorAndCount, key=lambda tup: tup[1], reverse=True)
         printAuthorInformation(authorAndCount)
         tf = calculateFactor(authorAndCount, fileWithFileAuthor, file_author_doa)
 
