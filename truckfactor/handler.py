@@ -128,7 +128,7 @@ def analyse(since, to, url, excludes):
     
     # PRINT FUNCTIONS
 
-    def printIntro(project_name, excludes, expandedExcludes):
+    def printIntro(project_name, excludes_orginal, expandedExcludes):
         # Print program information to user
         pyfiglet.print_figlet("VCS Analysis", font='slant')
         print("by Christoffer Nissen (ChristofferNissen)")
@@ -143,7 +143,7 @@ def analyse(since, to, url, excludes):
         print("Internal committers:", internal_authors.__len__())
         print("External committers:", external_authors.__len__())
         print("Specified exclude paths:")
-        for ep in excludes:
+        for ep in excludes_orginal:
             print(ep)
         print("Expanded into:")
         for ep in expandedExcludes:
