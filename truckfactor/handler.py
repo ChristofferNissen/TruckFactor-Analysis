@@ -203,14 +203,6 @@ def analyse(since, to, url, excludes):
         # limit to time of writing script for reproduceable results
         commits = RepositoryMining(path_to_repo=url, since=since ,to=to)
 
-        def expandExcludes(excludeList):
-
-            for e in excludeList:
-                # find name-chain 
-                e
-
-        expandExcludes(excludes)
-
         # Data extraction variables
         project_name = ""
         count = 0
@@ -667,9 +659,66 @@ def analyse(since, to, url, excludes):
         print()
         return tf
 
+    def expandExcludeList(url, excludePaths):
+        finalExcludeList = []
+        for ep in excludePaths:
+            uniquePaths = []
+            # needs input in 'as of current commit'
+            for commit in RepositoryMining(url, filepath=ep).traverse_commits():
+                filesChanged = commit.modifications
+                
+                for f in filesChanged:
+
+                    path = ""
+                    if f.new_path == None:
+                        # deleted file
+                        #print("deleted", f.old_path)
+                        path = f.old_path
+                    elif f.old_path == None:
+                        # new file
+                        #print("created", f.new_path)
+                        path = f.new_path
+                    elif f.new_path == f.old_path:
+                        #print("updated", f.new_path)
+                        path = f.new_path
+
+                    if ep in path:
+                        # old = f.old_path
+                        # new = f.new_path
+                        # print("old", old)
+                        # print("new", new)
+                        if not uniquePaths.__contains__(path):
+                            uniquePaths.append(path)
+
+            for p in uniquePaths:
+                # extract filename
+                arr = p.split("/")
+                filename = arr[arr.__len__()-1]
+
+                for commit in RepositoryMining(url, filepath=p).traverse_commits():
+                    filesChanged = commit.modifications
+                    for f in filesChanged:
+
+                        if f.new_path == None:
+                            # deleted file
+                            #print("deleted", f.old_path)
+                            path = f.old_path
+                        elif f.old_path == None:
+                            # new file
+                            #print("created", f.new_path)
+                            path = f.new_path
+                        elif f.new_path == f.old_path:
+                            #print("updated", f.new_path)
+                            path = f.new_path
+                        
+                        if filename in path:
+                            if path not in finalExcludeList:
+                                finalExcludeList.append(path)
+        return finalExcludeList
+
     # PROGRAM FLOW
     (inclusion_list, responseText) = getInclusionListFromLinguist(url)
-
+    excludes = expandExcludeList(url, excludes)
     (project_name, count, merges, all_authors, author_commit_dict, 
     internal_authors, external_authors, code_changes, _, excluded_files) = ExtractFromCommits(since, to, url, excludes)
 

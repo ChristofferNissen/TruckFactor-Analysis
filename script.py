@@ -487,16 +487,81 @@ since = None
 #to = datetime(2016, 4, 22, 0, 0)
 to = datetime(2020, 9, 28, 0, 0)
 
-for url in urls:
-    f = io.StringIO()
-    with redirect_stdout(f):
-        run_analysis(since, to, url)
+# for url in urls:
+#     f = io.StringIO()
+#     with redirect_stdout(f):
+#         run_analysis(since, to, url)
         
-    out = f.getvalue()
-    arr = url.split("/")
-    projectName = arr[arr.__len__()-1]
-    fileName = "paper_results/"+projectName+".txt"
-    f = open(fileName, "w")
-    f.write(out)
-    f.close()
-    print(out)
+#     out = f.getvalue()
+#     arr = url.split("/")
+#     projectName = arr[arr.__len__()-1]
+#     fileName = "paper_results/"+projectName+".txt"
+#     f = open(fileName, "w")
+#     f.write(out)
+#     f.close()
+#     print(out)
+
+# test
+def expandExcludeList(url, excludePaths):
+    finalExcludeList = []
+    for ep in excludePaths:
+        uniquePaths = []
+        # needs input in 'as of current commit'
+        for commit in RepositoryMining(url, filepath=ep).traverse_commits():
+            filesChanged = commit.modifications
+            
+            for f in filesChanged:
+
+                path = ""
+                if f.new_path == None:
+                    # deleted file
+                    #print("deleted", f.old_path)
+                    path = f.old_path
+                elif f.old_path == None:
+                    # new file
+                    #print("created", f.new_path)
+                    path = f.new_path
+                elif f.new_path == f.old_path:
+                    #print("updated", f.new_path)
+                    path = f.new_path
+
+                if ep in path:
+                    # old = f.old_path
+                    # new = f.new_path
+                    # print("old", old)
+                    # print("new", new)
+                    if not uniquePaths.__contains__(path):
+                        uniquePaths.append(path)
+
+        for p in uniquePaths:
+            # extract filename
+            arr = p.split("/")
+            filename = arr[arr.__len__()-1]
+
+            for commit in RepositoryMining(url, filepath=p).traverse_commits():
+                filesChanged = commit.modifications
+                for f in filesChanged:
+
+                    if f.new_path == None:
+                        # deleted file
+                        #print("deleted", f.old_path)
+                        path = f.old_path
+                    elif f.old_path == None:
+                        # new file
+                        #print("created", f.new_path)
+                        path = f.new_path
+                    elif f.new_path == f.old_path:
+                        #print("updated", f.new_path)
+                        path = f.new_path
+                    
+                    if filename in path:
+                        if path not in finalExcludeList:
+                            finalExcludeList.append(path)
+    return finalExcludeList
+
+url = "https://github.com/Praqma/helmsman"
+exclude = ["internal/app/"]
+tmp = expandExcludeList(url, exclude)
+for v in tmp:
+    print(v)
+
