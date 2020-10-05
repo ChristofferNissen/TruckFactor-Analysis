@@ -523,7 +523,7 @@ def analyse(since, to, url, excludes):
                         excluded = True
                         evictedBy = by
                 if excluded:
-                    excludedBy = "excluded by " + evictedBy
+                    excludedBy = " excluded by " + evictedBy
                     res = filename + f"{bcolors.ITA}{excludedBy}{bcolors.ENDC}"
                     print(f"{bcolors.OKBLUE}{res}{bcolors.ENDC}")
                 else:
@@ -548,7 +548,7 @@ def analyse(since, to, url, excludes):
                     filename = e[0]
                     if val.__contains__(filename):
                         explicitlyExcluded = True
-                        excludedBy = "excluded by " + e[1]
+                        excludedBy = " excluded by " + e[1]
                         res = filename + f"{bcolors.ITA}{excludedBy}{bcolors.ENDC}"
                         break
                 if explicitlyExcluded:
