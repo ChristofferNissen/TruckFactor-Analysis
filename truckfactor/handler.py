@@ -144,10 +144,10 @@ def analyse(since, to, url, excludes):
         print("External committers:", external_authors.__len__())
         print("Specified exclude paths:")
         for ep in excludes_orginal:
-            print(ep)
+            print('    ', ep)
         print("Expanded into:")
         for ep in expandedExcludes:
-            print(ep)
+            print('    ', ep)
 
     def printLinguist(inclusion_list, responseText):
         pyfiglet.print_figlet("Linguist", font='small')
@@ -743,3 +743,23 @@ def analyse(since, to, url, excludes):
     FileOverview()
     return CalculateTruckFactor()
     # PROGRAM END
+
+
+# Local Debug
+
+# req1 = '''
+# {
+#     "since": "None",
+#     "to": "2020-9-28-0-0",
+#     "urls": [
+#         "https://github.com/Praqma/helmsman.git"
+#     ],
+#     "returnType": "Report",
+#     "excludes": [
+#         "Dockerfile",
+#         "internal/app/",
+#         "decision_maker.go"
+#     ]
+# }
+# '''
+# print(handle(req1))
