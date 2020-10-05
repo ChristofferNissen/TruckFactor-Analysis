@@ -641,11 +641,10 @@ def analyse(since, to, url, excludes):
 
         pyfiglet.print_figlet("Truck Factor Calc.", font='small')
         print()
-        printNumberOfAuthors(fileAuthors)
-        printAuthorInformation(authorAndCount)
 
-        # sort by count
-        authorAndCount = sorted(authorAndCount, key=lambda tup: tup[1], reverse=False)
+        printNumberOfAuthors(fileAuthors)
+        authorAndCount = sorted(authorAndCount, key=lambda tup: tup[1], reverse=True)
+        printAuthorInformation(authorAndCount)
         tf = calculateFactor(authorAndCount, fileWithFileAuthor, file_author_doa)
 
         print()
@@ -661,7 +660,16 @@ def analyse(since, to, url, excludes):
 
     def expandExcludeList(url, excludePaths):
         finalExcludeList = []
+
+        # add specificly specified files to finalExcludeList directly
+        notParsed = []
         for ep in excludePaths:
+            if "/" not in ep:
+                finalExcludeList.append(ep)
+            else:
+                notParsed.append(ep)
+        
+        for ep in notParsed:
             uniquePaths = []
             # needs input in 'as of current commit'
             for commit in RepositoryMining(url, filepath=ep).traverse_commits():
@@ -714,6 +722,7 @@ def analyse(since, to, url, excludes):
                         if filename in path:
                             if path not in finalExcludeList:
                                 finalExcludeList.append(path)
+
         return finalExcludeList
 
     # PROGRAM FLOW

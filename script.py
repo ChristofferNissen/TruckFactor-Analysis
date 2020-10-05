@@ -504,7 +504,16 @@ to = datetime(2020, 9, 28, 0, 0)
 # test
 def expandExcludeList(url, excludePaths):
     finalExcludeList = []
+
+    # add specificly specified files to finalExcludeList directly
+    notParsed = []
     for ep in excludePaths:
+        if "/" not in ep:
+            finalExcludeList.append(ep)
+        else:
+            notParsed.append(ep)
+    
+    for ep in notParsed:
         uniquePaths = []
         # needs input in 'as of current commit'
         for commit in RepositoryMining(url, filepath=ep).traverse_commits():
@@ -557,10 +566,11 @@ def expandExcludeList(url, excludePaths):
                     if filename in path:
                         if path not in finalExcludeList:
                             finalExcludeList.append(path)
+
     return finalExcludeList
 
 url = "https://github.com/Praqma/helmsman"
-exclude = ["internal/app/"]
+exclude = ["decision_maker.go", "Dockerfile", "internal/app/"]
 tmp = expandExcludeList(url, exclude)
 for v in tmp:
     print(v)
