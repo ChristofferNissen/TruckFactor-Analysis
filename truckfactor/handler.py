@@ -749,12 +749,12 @@ def analyse(since, to, url, excludes):
 
 # Local Debug
 
-# req1 = '''
+# req_paper = '''
 # {
 #     "since": "None",
-#     "to": "2020-9-28-0-0",
+#     "to": "2016-5-1-0-0",
 #     "urls": [
-#         "https://github.com/Praqma/helmsman.git"
+#         "https://github.com/git/git"
 #     ],
 #     "returnType": "Report",
 #     "excludes": [
@@ -764,4 +764,21 @@ def analyse(since, to, url, excludes):
 #     ]
 # }
 # '''
+# req1 = '''
+# {
+#     "since": "None",
+#     "to": "2020-9-28-0-0",
+#     "urls": [
+#         "https://github.com/git/git"
+#     ],
+#     "returnType": "Report",
+#     "excludes": [
+#         "Dockerfile",
+#         "internal/app/",
+#         "decision_maker.go"
+#     ]
+# }
+# '''
+
+# print(handle(req_paper))
 # print(handle(req1))
