@@ -8,7 +8,7 @@ import io
 from contextlib import redirect_stdout
 import json
 import requests
-
+import os
 
 # Async invocation example
 # Open terminal 1 and run: 'nc -l 888'
@@ -449,6 +449,8 @@ def analyse(since, to, url, excludes):
                         # s = sqrt((sum(x-mean)^2)/n-1)
                         mean = mean(collection)
                         stdiv = CalculateStdiv(collection)
+                        if stdiv == 0: 
+                            stdiv = 1
                         
                         res = []
                         for r in collection:
@@ -613,7 +615,9 @@ def analyse(since, to, url, excludes):
             # Loop over files and count each time a file has an author
             # we have a touple of (file, author) for each ownership
             tf = 0
-            for t_ac in authorWithOwnershipCount:
+            sortedCollection = sorted(authorWithOwnershipCount, key=lambda tup: tup[1], reverse=True)
+
+            for t_ac in sortedCollection:
                 a = t_ac[0]
                 c = t_ac[1]
                 
@@ -642,7 +646,7 @@ def analyse(since, to, url, excludes):
 
             return tf
 
-        file_author_doa = OrganizeData()    
+        file_author_doa = OrganizeData()
         (fileWithFileAuthor, fileAuthors, _, authorAndCount) = ParseOrganizedData(file_author_doa, inclusion_list)
 
         pyfiglet.print_figlet("Truck Factor Calc.", font='small')
@@ -749,36 +753,93 @@ def analyse(since, to, url, excludes):
 
 # Local Debug
 
-# req_paper = '''
-# {
-#     "since": "None",
-#     "to": "2016-5-1-0-0",
-#     "urls": [
-#         "https://github.com/git/git"
-#     ],
-#     "returnType": "Report",
-#     "excludes": [
-#         "Dockerfile",
-#         "internal/app/",
-#         "decision_maker.go"
-#     ]
-# }
-# '''
 # req1 = '''
 # {
 #     "since": "None",
 #     "to": "2020-9-28-0-0",
 #     "urls": [
-#         "https://github.com/git/git"
+#         "https://github.com/Praqma/helmsman"
 #     ],
 #     "returnType": "Report",
 #     "excludes": [
-#         "Dockerfile",
-#         "internal/app/",
-#         "decision_maker.go"
+#         "Dockerfile"
 #     ]
 # }
 # '''
 
-# print(handle(req_paper))
 # print(handle(req1))
+
+
+# Reproduce paper results and compare to now
+def study(url):
+    req_paper_past = '''
+    {
+        "since": "None",
+        "to": "2016-5-1-0-0",
+        "urls": [
+            "''' + url + '''"
+        ],
+        "returnType": "Report",
+        "excludes": [
+            "Dockerfile"
+        ]
+    }
+    '''
+
+    req_paper_current = '''
+    {
+        "since": "None",
+        "to": "2020-9-28-0-0",
+        "urls": [
+            "''' + url + '''"
+        ],
+        "returnType": "Report",
+        "excludes": [
+            "Dockerfile"
+        ]
+    }
+    '''
+
+    reqs = [req_paper_past, req_paper_current]
+    identifiers = ['past_', 'current_']
+
+    for i in range(0, 1):
+        f = io.StringIO()
+        with redirect_stdout(f):
+            print(handle(reqs[i]))
+        out = f.getvalue()
+
+        ## write out to file
+        urlPathAppropriate = url.replace("https://github.com/", "").replace("/", "_")
+        output = open(outputPath+identifiers[i]+urlPathAppropriate+".out", "w")
+        output.write(out)
+        output.flush()
+        output.close()
+
+
+# Paper list (continued in urls)
+# "https://github.com/fzaninotto/Faker"
+# "https://github.com/android/platform_frameworks_base"
+# "https://github.com/moment/moment"
+# "https://github.com/odoo/odoo"
+# "https://github.com/fog/fog"
+# "https://github.com/v8/v8"
+# "https://github.com/Seldaek/monolog"
+# 
+
+urls = [
+    "https://github.com/php/php-src",
+    "https://github.com/saltstack/salt",
+    "https://github.com/puppetlabs/puppet/",
+    "https://github.com/JetBrains/intellij-community",
+    "https://github.com/rails/rails/",
+    "https://github.com/git/git",
+    "https://github.com/torvalds/linux",
+]
+
+outputPath = f"output/"
+if not os.path.exists(outputPath):
+    os.makedirs(outputPath)
+
+for url in urls:
+    study(url)
